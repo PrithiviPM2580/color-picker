@@ -113,7 +113,46 @@ const ColorConverter = {
     let H = Math.atan2(bk, a) * (180 / Math.PI);
     if (H < 0) H += 360;
     return { l: L * 100, c: C, h: H };
-  }
+  },
+
+  toCmyk(r, g, b) {
+    const rf = r / 255, gf = g / 255, bf = b / 255;
+    const k = 1 - Math.max(rf, gf, bf);
+    if (k === 1) return 'cmyk(0%, 0%, 0%, 100%)';
+    const c = (1 - rf - k) / (1 - k);
+    const m = (1 - gf - k) / (1 - k);
+    const y = (1 - bf - k) / (1 - k);
+    return `cmyk(${Math.round(c*100)}%, ${Math.round(m*100)}%, ${Math.round(y*100)}%, ${Math.round(k*100)}%)`;
+  },
+
+  toLab(r, g, b) {
+    const rl = this._linearize(r), gl = this._linearize(g), bl = this._linearize(b);
+    let X = 0.4124564*rl + 0.3575761*gl + 0.1804375*bl;
+    let Y = 0.2126729*rl + 0.7151522*gl + 0.0721750*bl;
+    let Z = 0.0193339*rl + 0.1191920*gl + 0.9503041*bl;
+    X /= 0.95047; Y /= 1.00000; Z /= 1.08883;
+    const f = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16/116;
+    const L = 116 * f(Y) - 16;
+    const a = 500 * (f(X) - f(Y));
+    const bv = 200 * (f(Y) - f(Z));
+    return `lab(${L.toFixed(2)} ${a.toFixed(2)} ${bv.toFixed(2)})`;
+  },
+
+  toLch(r, g, b) {
+    const rl = this._linearize(r), gl = this._linearize(g), bl = this._linearize(b);
+    let X = 0.4124564*rl + 0.3575761*gl + 0.1804375*bl;
+    let Y = 0.2126729*rl + 0.7151522*gl + 0.0721750*bl;
+    let Z = 0.0193339*rl + 0.1191920*gl + 0.9503041*bl;
+    X /= 0.95047; Y /= 1.00000; Z /= 1.08883;
+    const f = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16/116;
+    const L = 116 * f(Y) - 16;
+    const a = 500 * (f(X) - f(Y));
+    const bv = 200 * (f(Y) - f(Z));
+    const C = Math.sqrt(a*a + bv*bv);
+    let H = Math.atan2(bv, a) * 180 / Math.PI;
+    if (H < 0) H += 360;
+    return `lch(${L.toFixed(2)} ${C.toFixed(2)} ${H.toFixed(1)}°)`;
+  },
 };
 
 // ═══════════════════════════════════════════════════
@@ -428,6 +467,7 @@ let exportVarName = '--color-primary';
 let currentAlpha = 1.0;
 // Feature 9: history navigation index
 let historyIndex = -1;
+let recentColors = [];
 // Feature 4: compare state
 let compareColorB = { r: 255, g: 255, b: 255 };
 
@@ -451,7 +491,7 @@ function toggleTheme() {
 // ═══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
   // Load persisted data
-  const data = await chrome.storage.local.get(['pendingColor', 'colorHistory', 'uiTheme', 'pinnedColors', 'palettes', 'exportVarName', 'themePresets']);
+  const data = await chrome.storage.local.get(['pendingColor', 'colorHistory', 'uiTheme', 'pinnedColors', 'palettes', 'exportVarName', 'themePresets', 'recentColors']);
 
   // Apply saved theme (default: dark)
   applyTheme(data.uiTheme !== 'light');
@@ -467,6 +507,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   pinnedColors  = data.pinnedColors || [];
   palettes      = data.palettes     || [];
   themePresets  = data.themePresets || [];
+  recentColors = data.recentColors || [];
   if (data.exportVarName) {
     exportVarName = data.exportVarName;
     $('exportVarName').value = exportVarName;
@@ -482,8 +523,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   initGradientBuilder();
   updateColorBlindness();
   renderThemePresets();
-
-  // Tab navigation
+  renderRecentColors();
+  initMixer();
+  initContrastChecker();
+  initColorWheel();
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
@@ -730,6 +773,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
+  // Feature 3: Paste color input
+  const pasteInput = $('pasteColorInput');
+  if (pasteInput) {
+    pasteInput.addEventListener('input', e => {
+      const parsed = parsePastedColor(e.target.value.trim());
+      if (parsed) {
+        pasteInput.style.borderColor = '';
+        currentColor = parsed;
+        colorHistory.unshift({ ...parsed, timestamp: Date.now() });
+        if (colorHistory.length > 20) colorHistory.pop();
+        chrome.storage.local.set({ colorHistory });
+        updateColorDisplay(currentColor);
+        renderHistory();
+        setTimeout(() => { pasteInput.value = ''; pasteInput.style.borderColor = ''; }, 1000);
+      } else if (e.target.value.length > 3) {
+        pasteInput.style.borderColor = 'var(--danger)';
+        setTimeout(() => { pasteInput.style.borderColor = ''; }, 1500);
+      }
+    });
+  }
+
+  // Feature 4: Copy All formats
+  const btnCopyAll = $('btnCopyAll');
+  if (btnCopyAll) {
+    btnCopyAll.addEventListener('click', () => {
+      const { r, g, b } = currentColor;
+      const text = [
+        'HEX:   ' + ColorConverter.toHex(r, g, b).toUpperCase(),
+        'RGB:   ' + ColorConverter.toRgb(r, g, b),
+        'HSL:   ' + ColorConverter.toHsl(r, g, b),
+        'RGBA:  ' + $('valRgba').textContent,
+        'OKLCH: ' + ColorConverter.toOklch(r, g, b),
+        'CMYK:  ' + ColorConverter.toCmyk(r, g, b),
+        'LAB:   ' + ColorConverter.toLab(r, g, b),
+        'LCH:   ' + ColorConverter.toLch(r, g, b),
+      ].join('\n');
+      navigator.clipboard.writeText(text)
+        .then(() => showToast('All formats copied!', 'success'))
+        .catch(() => showToast('Copy failed', 'error'));
+    });
+  }
+
+  // Feature 8: Export PNG
+  const btnExportPng = $('btnExportPng');
+  if (btnExportPng) {
+    btnExportPng.addEventListener('click', exportPalettePng);
+  }
+
   // Listen for new picks while popup is open
   chrome.storage.onChanged.addListener(onStorageChange);
 });
@@ -817,6 +908,16 @@ function updateColorDisplay({ r, g, b }) {
   // Feature 4: Update compare if panel is open
   const comparePanel = $('comparePanel');
   if (comparePanel && comparePanel.style.display !== 'none') updateCompare();
+
+  // New formats
+  const cmykEl = $('valCmyk');
+  if (cmykEl) cmykEl.textContent = ColorConverter.toCmyk(r, g, b);
+  const labEl = $('valLab');
+  if (labEl) labEl.textContent = ColorConverter.toLab(r, g, b);
+  const lchEl = $('valLch');
+  if (lchEl) lchEl.textContent = ColorConverter.toLch(r, g, b);
+  // Feature 10: save recent
+  saveRecentColor(r, g, b);
 }
 
 // ═══════════════════════════════════════════════════
@@ -2164,4 +2265,354 @@ function relativeTime(ts) {
   if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
   if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
   return Math.floor(diff / 86400000) + 'd ago';
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 3: PASTE COLOR PARSER
+// ═══════════════════════════════════════════════════
+function parsePastedColor(str) {
+  if (!str) return null;
+  str = str.trim().toLowerCase();
+  // #RGB or #RRGGBB
+  const hexM = str.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/);
+  if (hexM) return ColorConverter.hexToRgb(str.startsWith('#') ? str : '#' + str);
+  // rgb(r,g,b) or rgba(r,g,b,a)
+  const rgbM = str.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+  if (rgbM) {
+    const r = parseInt(rgbM[1]), g = parseInt(rgbM[2]), b = parseInt(rgbM[3]);
+    if (r<=255&&g<=255&&b<=255) return {r,g,b};
+  }
+  // hsl(h,s%,l%) or hsla
+  const hslM = str.match(/^hsla?\(\s*([\d.]+)\s*,\s*([\d.]+)%?\s*,\s*([\d.]+)%?/);
+  if (hslM) {
+    const h = parseFloat(hslM[1]), s = parseFloat(hslM[2]), l = parseFloat(hslM[3]);
+    return ColorConverter.hslToRgb(h, s, l);
+  }
+  // named CSS color — search ColorNames data
+  const named = namedColorToRgb(str);
+  if (named) return named;
+  return null;
+}
+
+const _namedColorMap = (function() {
+  const map = {};
+  const d=[['aliceblue',240,248,255],['antiquewhite',250,235,215],['aqua',0,255,255],['aquamarine',127,255,212],['azure',240,255,255],['beige',245,245,220],['bisque',255,228,196],['black',0,0,0],['blanchedalmond',255,235,205],['blue',0,0,255],['blueviolet',138,43,226],['brown',165,42,42],['burlywood',222,184,135],['cadetblue',95,158,160],['chartreuse',127,255,0],['chocolate',210,105,30],['coral',255,127,80],['cornflowerblue',100,149,237],['cornsilk',255,248,220],['crimson',220,20,60],['cyan',0,255,255],['darkblue',0,0,139],['darkcyan',0,139,139],['darkgoldenrod',184,134,11],['darkgray',169,169,169],['darkgreen',0,100,0],['darkkhaki',189,183,107],['darkmagenta',139,0,139],['darkolivegreen',85,107,47],['darkorange',255,140,0],['darkorchid',153,50,204],['darkred',139,0,0],['darksalmon',233,150,122],['darkseagreen',143,188,143],['darkslateblue',72,61,139],['darkslategray',47,79,79],['darkturquoise',0,206,209],['darkviolet',148,0,211],['deeppink',255,20,147],['deepskyblue',0,191,255],['dimgray',105,105,105],['dodgerblue',30,144,255],['firebrick',178,34,34],['floralwhite',255,250,240],['forestgreen',34,139,34],['fuchsia',255,0,255],['gainsboro',220,220,220],['ghostwhite',248,248,255],['gold',255,215,0],['goldenrod',218,165,32],['gray',128,128,128],['green',0,128,0],['greenyellow',173,255,47],['honeydew',240,255,240],['hotpink',255,105,180],['indianred',205,92,92],['indigo',75,0,130],['ivory',255,255,240],['khaki',240,230,140],['lavender',230,230,250],['lavenderblush',255,240,245],['lawngreen',124,252,0],['lemonchiffon',255,250,205],['lightblue',173,216,230],['lightcoral',240,128,128],['lightcyan',224,255,255],['lightgoldenrodyellow',250,250,210],['lightgray',211,211,211],['lightgreen',144,238,144],['lightpink',255,182,193],['lightsalmon',255,160,122],['lightseagreen',32,178,170],['lightskyblue',135,206,250],['lightslategray',119,136,153],['lightsteelblue',176,196,222],['lightyellow',255,255,224],['lime',0,255,0],['limegreen',50,205,50],['linen',250,240,230],['magenta',255,0,255],['maroon',128,0,0],['mediumaquamarine',102,205,170],['mediumblue',0,0,205],['mediumorchid',186,85,211],['mediumpurple',147,112,219],['mediumseagreen',60,179,113],['mediumslateblue',123,104,238],['mediumspringgreen',0,250,154],['mediumturquoise',72,209,204],['mediumvioletred',199,21,133],['midnightblue',25,25,112],['mintcream',245,255,250],['mistyrose',255,228,225],['moccasin',255,228,181],['navajowhite',255,222,173],['navy',0,0,128],['oldlace',253,245,230],['olive',128,128,0],['olivedrab',107,142,35],['orange',255,165,0],['orangered',255,69,0],['orchid',218,112,214],['palegoldenrod',238,232,170],['palegreen',152,251,152],['paleturquoise',175,238,238],['palevioletred',219,112,147],['papayawhip',255,239,213],['peachpuff',255,218,185],['peru',205,133,63],['pink',255,192,203],['plum',221,160,221],['powderblue',176,224,230],['purple',128,0,128],['red',255,0,0],['rosybrown',188,143,143],['royalblue',65,105,225],['saddlebrown',139,69,19],['salmon',250,128,114],['sandybrown',244,164,96],['seagreen',46,139,87],['seashell',255,245,238],['sienna',160,82,45],['silver',192,192,192],['skyblue',135,206,235],['slateblue',106,90,205],['slategray',112,128,144],['snow',255,250,250],['springgreen',0,255,127],['steelblue',70,130,180],['tan',210,180,140],['teal',0,128,128],['thistle',216,191,216],['tomato',255,99,71],['turquoise',64,224,208],['violet',238,130,238],['wheat',245,222,179],['white',255,255,255],['whitesmoke',245,245,245],['yellow',255,255,0],['yellowgreen',154,205,50]];
+  d.forEach(([n,r,g,b]) => { map[n] = {r,g,b}; });
+  return map;
+})();
+
+function namedColorToRgb(name) {
+  return _namedColorMap[name.toLowerCase()] || null;
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 5: COLOR MIXER
+// ═══════════════════════════════════════════════════
+function initMixer() {
+  const colorA = $('mixColorA'), colorB = $('mixColorB');
+  const hexA = $('mixColorAHex'), hexB = $('mixColorBHex');
+  const slider = $('mixRatioSlider');
+  if (!colorA || !colorB || !slider) return;
+
+  function updateMixer() {
+    const rgbA = ColorConverter.hexToRgb(colorA.value) || {r:255,g:107,b:107};
+    const rgbB = ColorConverter.hexToRgb(colorB.value) || {r:78,g:205,b:196};
+    const t = parseInt(slider.value) / 100;
+    const r = Math.round(rgbA.r + (rgbB.r - rgbA.r) * t);
+    const g = Math.round(rgbA.g + (rgbB.g - rgbA.g) * t);
+    const b = Math.round(rgbA.b + (rgbB.b - rgbA.b) * t);
+    const hex = ColorConverter.toHex(r, g, b);
+    const resultSwatch = $('mixResultSwatch');
+    if (resultSwatch) resultSwatch.style.background = hex;
+    const mixHexOut = $('mixResultHex');
+    if (mixHexOut) mixHexOut.textContent = hex.toUpperCase();
+    const mixRgbOut = $('mixResultRgb');
+    if (mixRgbOut) mixRgbOut.textContent = ColorConverter.toRgb(r, g, b);
+    const mixHslOut = $('mixResultHsl');
+    if (mixHslOut) mixHslOut.textContent = ColorConverter.toHsl(r, g, b);
+    const ratioLbl = $('mixRatioLabel');
+    if (ratioLbl) ratioLbl.textContent = 'Mix ratio: ' + slider.value + '%';
+    // Store result for copy/use buttons
+    colorA._mixResult = {r, g, b};
+  }
+
+  colorA.addEventListener('input', e => { if (hexA) hexA.value = e.target.value; updateMixer(); });
+  colorB.addEventListener('input', e => { if (hexB) hexB.value = e.target.value; updateMixer(); });
+  hexA.addEventListener('input', e => {
+    const rgb = ColorConverter.hexToRgb(e.target.value);
+    if (rgb) { colorA.value = e.target.value; updateMixer(); }
+  });
+  hexB.addEventListener('input', e => {
+    const rgb = ColorConverter.hexToRgb(e.target.value);
+    if (rgb) { colorB.value = e.target.value; updateMixer(); }
+  });
+  slider.addEventListener('input', updateMixer);
+
+  const btnCopyMix = $('btnCopyMixResult');
+  if (btnCopyMix) {
+    btnCopyMix.addEventListener('click', () => {
+      const res = colorA._mixResult;
+      if (res) copyText(ColorConverter.toHex(res.r, res.g, res.b).toUpperCase(), btnCopyMix);
+    });
+  }
+  const btnUseMix = $('btnUseMixResult');
+  if (btnUseMix) {
+    btnUseMix.addEventListener('click', () => {
+      const res = colorA._mixResult;
+      if (res) {
+        currentColor = { ...res };
+        colorHistory.unshift({ ...res, timestamp: Date.now() });
+        if (colorHistory.length > 20) colorHistory.pop();
+        chrome.storage.local.set({ colorHistory });
+        updateColorDisplay(currentColor);
+        renderHistory();
+        switchTab('picker');
+        showToast('Color set from mixer!', 'success');
+      }
+    });
+  }
+  updateMixer();
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 6: CONTRAST CHECKER (Tools tab)
+// ═══════════════════════════════════════════════════
+function initContrastChecker() {
+  const fg = $('contrastFg'), bg = $('contrastBg');
+  const fgHex = $('contrastFgHex'), bgHex = $('contrastBgHex');
+  if (!fg || !bg) return;
+
+  function updateToolsContrast() {
+    const fgRgb = ColorConverter.hexToRgb(fg.value);
+    const bgRgb = ColorConverter.hexToRgb(bg.value);
+    if (!fgRgb || !bgRgb) return;
+    const ratio = WCAGChecker.ratio(fgRgb, bgRgb);
+    const ev = WCAGChecker.evaluate(ratio);
+    const ratioEl = $('toolsContrastRatio');
+    if (ratioEl) ratioEl.textContent = ratio.toFixed(2) + ' : 1';
+    const preview = $('toolsContrastPreview');
+    if (preview) {
+      preview.style.background = bg.value;
+      const normalText = preview.querySelector('.contrast-normal-text');
+      const boldText = preview.querySelector('.contrast-bold-text');
+      if (normalText) normalText.style.color = fg.value;
+      if (boldText) boldText.style.color = fg.value;
+    }
+    const badges = [
+      { id: 'wcagAANorm',   pass: ev.aa,    label: 'AA Normal' },
+      { id: 'wcagAALarge',  pass: ev.aaLg,  label: 'AA Large' },
+      { id: 'wcagAAA',      pass: ev.aaa,   label: 'AAA Normal' },
+      { id: 'wcagAAALarge', pass: ev.aaaLg, label: 'AAA Large' },
+    ];
+    badges.forEach(({ id, pass, label }) => {
+      const el = $(id);
+      if (el) {
+        el.textContent = label + ': ' + (pass ? 'PASS' : 'FAIL');
+        el.classList.toggle('pass', pass);
+        el.classList.toggle('fail', !pass);
+      }
+    });
+  }
+
+  fg.addEventListener('input', e => { if (fgHex) fgHex.value = e.target.value; updateToolsContrast(); });
+  bg.addEventListener('input', e => { if (bgHex) bgHex.value = e.target.value; updateToolsContrast(); });
+  if (fgHex) fgHex.addEventListener('input', e => {
+    const clean = e.target.value.startsWith('#') ? e.target.value : '#' + e.target.value;
+    const rgb = ColorConverter.hexToRgb(clean);
+    if (rgb) { fg.value = clean; updateToolsContrast(); }
+  });
+  if (bgHex) bgHex.addEventListener('input', e => {
+    const clean = e.target.value.startsWith('#') ? e.target.value : '#' + e.target.value;
+    const rgb = ColorConverter.hexToRgb(clean);
+    if (rgb) { bg.value = clean; updateToolsContrast(); }
+  });
+
+  const btnSwap = $('btnSwapContrast');
+  if (btnSwap) {
+    btnSwap.addEventListener('click', () => {
+      const tmpFg = fg.value, tmpBg = bg.value;
+      fg.value = tmpBg; bg.value = tmpFg;
+      if (fgHex) fgHex.value = tmpBg;
+      if (bgHex) bgHex.value = tmpFg;
+      updateToolsContrast();
+    });
+  }
+  const btnUseCurrent = $('btnUseCurrentContrast');
+  if (btnUseCurrent) {
+    btnUseCurrent.addEventListener('click', () => {
+      const hex = ColorConverter.toHex(currentColor.r, currentColor.g, currentColor.b);
+      fg.value = hex;
+      if (fgHex) fgHex.value = hex;
+      updateToolsContrast();
+      showToast('Foreground set to current color', 'success');
+    });
+  }
+  updateToolsContrast();
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 8: EXPORT PALETTE AS PNG
+// ═══════════════════════════════════════════════════
+function exportPalettePng() {
+  if (!colorHistory.length) { showToast('No colors in history to export', 'error'); return; }
+  const colors = colorHistory.slice(0, 16);
+  const swatchW = 60, swatchH = 80;
+  const canvas = document.createElement('canvas');
+  canvas.width = colors.length * swatchW;
+  canvas.height = swatchH;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#1a1a26';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  colors.forEach(({ r, g, b }, i) => {
+    const hex = ColorConverter.toHex(r, g, b);
+    ctx.fillStyle = hex;
+    ctx.fillRect(i * swatchW + 4, 4, swatchW - 8, 48);
+    ctx.fillStyle = '#ccc';
+    ctx.font = '8px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(hex.toUpperCase(), i * swatchW + swatchW / 2, 66);
+  });
+  const date = new Date().toISOString().slice(0, 10);
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `colorpick-palette-${date}.png`;
+  a.click();
+  showToast('PNG downloaded!', 'success');
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 9: COLOR WHEEL
+// ═══════════════════════════════════════════════════
+function initColorWheel() {
+  const canvas = $('colorWheelCanvas');
+  if (!canvas) return;
+  const size = 180;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  let wheelH = ColorConverter._rgbToHslVals(currentColor.r, currentColor.g, currentColor.b).h;
+  let wheelS = ColorConverter._rgbToHslVals(currentColor.r, currentColor.g, currentColor.b).s;
+  let wheelL = 50;
+
+  function drawWheel() {
+    const imageData = ctx.createImageData(size, size);
+    const cx = size / 2, cy = size / 2, radius = size / 2 - 2;
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const dx = x - cx, dy = y - cy;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist <= radius) {
+          const angle = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+          const sat = (dist / radius) * 100;
+          const rgb = ColorConverter.hslToRgb(angle, sat, wheelL);
+          const idx = (y * size + x) * 4;
+          imageData.data[idx]   = rgb.r;
+          imageData.data[idx+1] = rgb.g;
+          imageData.data[idx+2] = rgb.b;
+          imageData.data[idx+3] = 255;
+        }
+      }
+    }
+    ctx.putImageData(imageData, 0, 0);
+    // Draw crosshair
+    const angleRad = wheelH * Math.PI / 180;
+    const satRadius = (wheelS / 100) * (size / 2 - 2);
+    const px = cx + Math.cos(angleRad) * satRadius;
+    const py = cy + Math.sin(angleRad) * satRadius;
+    ctx.beginPath();
+    ctx.arc(px, py, 6, 0, Math.PI * 2);
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(px, py, 4, 0, Math.PI * 2);
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  function updateWheelOutput() {
+    const rgb = ColorConverter.hslToRgb(wheelH, wheelS, wheelL);
+    const hex = ColorConverter.toHex(rgb.r, rgb.g, rgb.b);
+    const swatch = $('wheelResultSwatch');
+    if (swatch) swatch.style.background = hex;
+    const hexEl = $('wheelResultHex');
+    if (hexEl) hexEl.textContent = hex.toUpperCase();
+  }
+
+  canvas.addEventListener('click', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    const cx = size / 2, cy = size / 2;
+    const dx = x - cx, dy = y - cy;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const radius = size / 2 - 2;
+    if (dist <= radius) {
+      wheelH = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+      wheelS = Math.min(100, (dist / radius) * 100);
+      drawWheel();
+      updateWheelOutput();
+    }
+  });
+
+  const lightSlider = $('wheelLightSlider');
+  if (lightSlider) {
+    lightSlider.addEventListener('input', e => {
+      wheelL = parseInt(e.target.value);
+      drawWheel();
+      updateWheelOutput();
+    });
+  }
+
+  const btnUseWheel = $('btnUseWheelColor');
+  if (btnUseWheel) {
+    btnUseWheel.addEventListener('click', () => {
+      const rgb = ColorConverter.hslToRgb(wheelH, wheelS, wheelL);
+      currentColor = { ...rgb };
+      colorHistory.unshift({ ...rgb, timestamp: Date.now() });
+      if (colorHistory.length > 20) colorHistory.pop();
+      chrome.storage.local.set({ colorHistory });
+      updateColorDisplay(currentColor);
+      renderHistory();
+      switchTab('picker');
+      showToast('Color set from wheel!', 'success');
+    });
+  }
+
+  drawWheel();
+  updateWheelOutput();
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 10: RECENT COLORS
+// ═══════════════════════════════════════════════════
+function saveRecentColor(r, g, b) {
+  const hex = ColorConverter.toHex(r, g, b);
+  recentColors = recentColors.filter(c => ColorConverter.toHex(c.r, c.g, c.b) !== hex);
+  recentColors.unshift({ r, g, b });
+  if (recentColors.length > 20) recentColors.length = 20;
+  chrome.storage.local.set({ recentColors });
+  renderRecentColors();
+}
+
+function renderRecentColors() {
+  const row = $('recentColorsRow');
+  if (!row) return;
+  row.innerHTML = '';
+  const toShow = recentColors.slice(0, 8);
+  if (!toShow.length) { row.innerHTML = '<span style="color:var(--text-muted);font-size:10px;">No recent colors</span>'; return; }
+  toShow.forEach(({ r, g, b }) => {
+    const hex = ColorConverter.toHex(r, g, b);
+    const dot = document.createElement('div');
+    dot.className = 'recent-color-dot';
+    dot.style.background = hex;
+    dot.title = hex.toUpperCase();
+    dot.addEventListener('click', () => {
+      currentColor = { r, g, b };
+      updateColorDisplay(currentColor);
+      switchTab('picker');
+      showToast('Loaded ' + hex.toUpperCase(), 'success');
+    });
+    row.appendChild(dot);
+  });
 }

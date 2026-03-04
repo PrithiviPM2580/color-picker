@@ -1955,3 +1955,178 @@ body {
   min-height: 100px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
+
+/* ══════════════════════════════════════════════════
+   NEW FEATURES: 10-feature additions
+══════════════════════════════════════════════════ */
+
+/* Feature 1: CMYK tag */
+.cmyk-tag {
+  background: rgba(13, 148, 136, 0.2);
+  color: #2dd4bf;
+  border-color: rgba(13, 148, 136, 0.35);
+}
+
+/* Feature 2: LAB / LCH tags */
+.lab-tag {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+  border-color: rgba(139, 92, 246, 0.35);
+}
+.lch-tag {
+  background: rgba(249, 115, 22, 0.2);
+  color: #fdba74;
+  border-color: rgba(249, 115, 22, 0.35);
+}
+
+/* Feature 3: Paste input */
+.paste-input-wrap {
+  margin-bottom: 6px;
+}
+.paste-color-input {
+  width: 100%;
+  padding: 6px 10px;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font: 400 11px/1.4 var(--font-sans);
+  outline: none;
+  transition: border-color var(--transition);
+  box-sizing: border-box;
+}
+.paste-color-input:focus {
+  border-color: var(--accent);
+}
+.paste-color-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Feature 5: Color Mixer */
+.mixer-section {
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  margin-bottom: 8px;
+}
+.mixer-colors-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.mixer-color-group {
+  flex: 1;
+}
+.mixer-plus {
+  font-size: 16px;
+  color: var(--text-muted);
+  padding-bottom: 4px;
+  flex-shrink: 0;
+}
+.mixer-ratio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.mixer-result-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mix-result-swatch {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  background: #a8997c;
+}
+.mix-result-values {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mix-result-values .format-value {
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mix-result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+/* Feature 6: Tools Contrast Checker */
+.tools-contrast-result {
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+.wcag-badges-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.wcag-badge.pass {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.35);
+}
+.wcag-badge.fail {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Feature 9: Color Wheel */
+.color-wheel-section {
+  margin-bottom: 8px;
+}
+.color-wheel-canvas {
+  display: block;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+}
+.wheel-lightness-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wheel-result-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Feature 10: Recent colors */
+.recent-colors-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 0;
+}
+.recent-color-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+  flex-shrink: 0;
+}
+.recent-color-dot:hover {
+  transform: scale(1.2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}

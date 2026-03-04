@@ -112,6 +112,12 @@
             <line x1="12" y1="2" x2="12" y2="15"/>
           </svg>
         </button>
+        <button class="btn-icon-sq" id="btnCopyAll" title="Copy all formats">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+        </button>
       </div>
       <div class="kb-hint">P pick · C copy · R random · ←→ history</div>
 
@@ -123,6 +129,9 @@
 
       <!-- Color Formats -->
       <div class="section-label">Color Formats</div>
+      <div class="paste-input-wrap">
+        <input type="text" id="pasteColorInput" class="paste-color-input" placeholder="Paste any color: #hex, rgb(), hsl(), oklch()…" />
+      </div>
       <div class="formats-list">
 
         <!-- Manual set row -->
@@ -179,6 +188,30 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
         </div>
+
+        <div class="format-row" id="rowCmyk">
+          <span class="format-tag cmyk-tag">CMYK</span>
+          <span class="format-value mono" id="valCmyk">cmyk(43%, 63%, 0%, 4%)</span>
+          <button class="btn-copy" data-copy="valCmyk" title="Copy CMYK">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+
+        <div class="format-row" id="rowLab">
+          <span class="format-tag lab-tag">LAB</span>
+          <span class="format-value mono" id="valLab">lab(55.32 -14.21 47.83)</span>
+          <button class="btn-copy" data-copy="valLab" title="Copy LAB">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+
+        <div class="format-row" id="rowLch">
+          <span class="format-tag lch-tag">LCH</span>
+          <span class="format-value mono" id="valLch">lch(55.32 49.90 106.6°)</span>
+          <button class="btn-copy" data-copy="valLch" title="Copy LCH">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
         <div class="format-row alpha-format-row" id="rowHsla" style="display:none;">
           <span class="format-tag hsla-tag">HSLA</span>
           <span class="format-value mono" id="valHsla">hsla(263, 90%, 66%, 1.00)</span>
@@ -227,6 +260,10 @@
 
     <!-- ── TAB: HISTORY + WCAG ─────────────────────────── -->
     <div class="tab-panel" id="panel-history">
+
+      <!-- Recent Colors (Feature 10) -->
+      <div class="section-label" style="margin-bottom:4px;">Recently Viewed</div>
+      <div id="recentColorsRow" class="recent-colors-row" style="margin-bottom:8px;"></div>
 
       <!-- History Search -->
       <div class="history-search-wrap">
@@ -436,6 +473,14 @@
         </button>
       </div>
 
+      <div class="divider"></div>
+      <div class="section-label">Export as PNG</div>
+      <p style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;">Download color history as a PNG swatch strip (up to 16 colors).</p>
+      <button class="btn-secondary" id="btnExportPng" style="width:100%;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PNG
+      </button>
+
     </div>
 
     <!-- ── TAB: PALETTE ──────────────────────────────── -->
@@ -454,6 +499,93 @@
 
     <!-- ── TAB: TOOLS ────────────────────────────────── -->
     <div class="tab-panel" id="panel-tools">
+
+      <!-- Color Mixer (Feature 5) -->
+      <div class="section-label">Color Mixer</div>
+      <div class="mixer-section">
+        <div class="mixer-colors-row">
+          <div class="mixer-color-group">
+            <label class="contrast-label">Color A</label>
+            <div class="color-field">
+              <input type="color" id="mixColorA" value="#ff6b6b" />
+              <input type="text" id="mixColorAHex" value="#ff6b6b" maxlength="7" />
+            </div>
+          </div>
+          <div class="mixer-plus">+</div>
+          <div class="mixer-color-group">
+            <label class="contrast-label">Color B</label>
+            <div class="color-field">
+              <input type="color" id="mixColorB" value="#4ecdc4" />
+              <input type="text" id="mixColorBHex" value="#4ecdc4" maxlength="7" />
+            </div>
+          </div>
+        </div>
+        <div class="mixer-ratio-row">
+          <span id="mixRatioLabel" class="contrast-label">Mix ratio: 50%</span>
+          <input type="range" id="mixRatioSlider" class="alpha-slider" min="0" max="100" value="50" />
+        </div>
+        <div class="mixer-result-row">
+          <div class="mix-result-swatch" id="mixResultSwatch"></div>
+          <div class="mix-result-values">
+            <div class="format-value mono" id="mixResultHex">#A8997C</div>
+            <div class="format-value mono" id="mixResultRgb">rgb(168, 153, 124)</div>
+            <div class="format-value mono" id="mixResultHsl">hsl(38, 21%, 57%)</div>
+          </div>
+          <div class="mix-result-actions">
+            <button class="btn-copy" id="btnCopyMixResult" title="Copy HEX">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+            <button class="btn-secondary" id="btnUseMixResult" style="font-size:10px;padding:3px 7px;">Use</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Contrast Checker (Feature 6) -->
+      <div class="section-label">Contrast Checker</div>
+      <div class="contrast-inputs">
+        <div class="contrast-color-group">
+          <label class="contrast-label">Foreground</label>
+          <div class="color-field">
+            <input type="color" id="contrastFg" value="#000000" />
+            <input type="text" id="contrastFgHex" value="#000000" maxlength="7" placeholder="#000000" />
+          </div>
+        </div>
+        <div class="swap-btn-wrap">
+          <button class="btn-swap" id="btnSwapContrast" title="Swap colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 16V4m0 0L3 8m4-4 4 4"/><path d="M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
+          </button>
+        </div>
+        <div class="contrast-color-group">
+          <label class="contrast-label">Background</label>
+          <div class="color-field">
+            <input type="color" id="contrastBg" value="#ffffff" />
+            <input type="text" id="contrastBgHex" value="#ffffff" maxlength="7" placeholder="#ffffff" />
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:6px;">
+        <button class="btn-secondary" id="btnUseCurrentContrast" style="font-size:11px;width:100%;margin-bottom:6px;">← Use current picker color as Fg</button>
+      </div>
+      <div class="tools-contrast-result">
+        <div class="contrast-ratio-wrap" style="margin-bottom:6px;">
+          <span class="contrast-ratio-label">Ratio</span>
+          <span class="contrast-ratio" id="toolsContrastRatio">—</span>
+        </div>
+        <div class="wcag-badges-grid">
+          <span class="wcag-badge" id="wcagAANorm">AA Normal: —</span>
+          <span class="wcag-badge" id="wcagAALarge">AA Large: —</span>
+          <span class="wcag-badge" id="wcagAAA">AAA Normal: —</span>
+          <span class="wcag-badge" id="wcagAAALarge">AAA Large: —</span>
+        </div>
+        <div id="toolsContrastPreview" class="contrast-preview" style="margin-top:8px;padding:8px;border-radius:var(--radius-sm);">
+          <span class="contrast-normal-text" style="font-size:13px;">Normal text preview</span>
+          <span class="contrast-bold-text" style="font-size:13px;font-weight:700;margin-left:8px;">Bold text</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
 
       <!-- Gradient Builder -->
       <div class="section-label">Gradient Builder</div>
@@ -520,6 +652,23 @@
       <canvas id="imagePickerCanvas" class="image-picker-canvas" style="display:none;cursor:crosshair;"></canvas>
       <div id="imagePickedHex" class="image-picked-hex" style="display:none;"></div>
       <button id="btnClearImage" class="btn-secondary" style="display:none;margin-top:6px;">✕ Clear Image</button>
+
+      <div class="divider"></div>
+
+      <!-- Color Wheel (Feature 9) -->
+      <div class="section-label">Color Wheel</div>
+      <div class="color-wheel-section">
+        <canvas id="colorWheelCanvas" class="color-wheel-canvas" width="180" height="180" style="cursor:crosshair;display:block;margin:0 auto;border-radius:50%;"></canvas>
+        <div class="wheel-lightness-row" style="margin-top:8px;">
+          <span class="contrast-label">Lightness</span>
+          <input type="range" id="wheelLightSlider" class="alpha-slider" min="0" max="100" value="50" style="flex:1;" />
+        </div>
+        <div class="wheel-result-row" style="margin-top:6px;display:flex;align-items:center;gap:8px;">
+          <div id="wheelResultSwatch" class="mix-result-swatch" style="width:32px;height:32px;border-radius:var(--radius-sm);"></div>
+          <span class="format-value mono" id="wheelResultHex" style="flex:1;">#8B5CF6</span>
+          <button class="btn-secondary" id="btnUseWheelColor" style="font-size:11px;padding:4px 10px;">Use Color</button>
+        </div>
+      </div>
 
       <!-- Page Color Audit (Feature 5) -->
       <div class="divider"></div>
