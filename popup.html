@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ColorPick Pro</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="9" stroke="url(#lg)" stroke-width="2"/>
+            <circle cx="10" cy="10" r="3" fill="url(#lg2)"/>
+            <defs>
+              <linearGradient id="lg" x1="1" y1="1" x2="19" y2="19">
+                <stop offset="0%" stop-color="#f472b6"/>
+                <stop offset="50%" stop-color="#8b5cf6"/>
+                <stop offset="100%" stop-color="#06b6d4"/>
+              </linearGradient>
+              <linearGradient id="lg2" x1="7" y1="7" x2="13" y2="13">
+                <stop offset="0%" stop-color="#f9fafb"/>
+                <stop offset="100%" stop-color="#d1d5db"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="app-title">ColorPick Pro</span>
+      </div>
+      <div class="header-right">
+        <button class="btn-theme-toggle" id="btnThemeToggle" title="Toggle light/dark mode">
+          <!-- Moon icon (shown in dark mode) -->
+          <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <!-- Sun icon (shown in light mode) -->
+          <svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+        <span class="version-badge">v1.0</span>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="picker" role="tab">Picker</button>
+      <button class="tab" data-tab="history" role="tab">History</button>
+      <button class="tab" data-tab="theme" role="tab">Theme</button>
+      <button class="tab" data-tab="export" role="tab">Export</button>
+    </nav>
+
+    <!-- ── TAB: PICKER ─────────────────────────────────── -->
+    <div class="tab-panel active" id="panel-picker">
+
+      <!-- Color Preview -->
+      <div class="color-preview-wrap">
+        <div class="color-swatch" id="colorSwatch"></div>
+        <div class="color-meta">
+          <div class="hex-large" id="hexLarge">#8B5CF6</div>
+          <div class="rgb-small" id="rgbSmall">rgb(139, 92, 246)</div>
+        </div>
+      </div>
+
+      <!-- Pick Button -->
+      <button class="btn-pick" id="btnPick">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 13.5V20a2 2 0 0 0 2 2h.5"/>
+          <path d="M22 13.5V20a2 2 0 0 1-2 2h-.5"/>
+          <path d="M12 2 3 9l9 11 9-11z"/>
+          <path d="M12 2v20"/>
+        </svg>
+        Pick Color from Page
+      </button>
+
+      <!-- Format Rows -->
+      <div class="section-label">Color Formats</div>
+      <div class="formats-list">
+
+        <div class="format-row">
+          <span class="format-tag hex-tag">HEX</span>
+          <span class="format-value mono" id="valHex">#8B5CF6</span>
+          <button class="btn-copy" data-copy="valHex" title="Copy HEX">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+
+        <div class="format-row">
+          <span class="format-tag rgb-tag">RGB</span>
+          <span class="format-value mono" id="valRgb">rgb(139, 92, 246)</span>
+          <button class="btn-copy" data-copy="valRgb" title="Copy RGB">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+
+        <div class="format-row">
+          <span class="format-tag norm-tag">NORM</span>
+          <span class="format-value mono" id="valNorm">rgb(0.545, 0.361, 0.965)</span>
+          <button class="btn-copy" data-copy="valNorm" title="Copy Normalized">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+
+        <div class="format-row">
+          <span class="format-tag hsl-tag">HSL</span>
+          <span class="format-value mono" id="valHsl">hsl(263, 90%, 66%)</span>
+          <button class="btn-copy" data-copy="valHsl" title="Copy HSL">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+
+        <div class="format-row">
+          <span class="format-tag oklch-tag">OKLCH</span>
+          <span class="format-value mono" id="valOklch">oklch(60.42% 0.2576 292.15)</span>
+          <button class="btn-copy" data-copy="valOklch" title="Copy OKLCH">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── TAB: HISTORY + WCAG ─────────────────────────── -->
+    <div class="tab-panel" id="panel-history">
+
+      <div class="section-label">
+        Recent Colors
+        <button class="btn-text-sm" id="btnClearHistory">Clear all</button>
+      </div>
+      <div class="history-grid" id="historyPalette">
+        <div class="history-empty">No colors picked yet</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-label">WCAG Contrast Checker</div>
+
+      <div class="contrast-inputs">
+        <div class="contrast-color-group">
+          <label class="contrast-label">Foreground</label>
+          <div class="color-field">
+            <input type="color" id="fgColor" value="#ffffff" />
+            <input type="text" id="fgHex" value="#ffffff" maxlength="7" placeholder="#ffffff" />
+          </div>
+        </div>
+        <div class="swap-btn-wrap">
+          <button class="btn-swap" id="btnSwapColors" title="Swap colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 16V4m0 0L3 8m4-4 4 4"/><path d="M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
+          </button>
+        </div>
+        <div class="contrast-color-group">
+          <label class="contrast-label">Background</label>
+          <div class="color-field">
+            <input type="color" id="bgColor" value="#1a1a2e" />
+            <input type="text" id="bgHex" value="#1a1a2e" maxlength="7" placeholder="#000000" />
+          </div>
+        </div>
+      </div>
+
+      <div class="contrast-result" id="contrastResult">
+        <div class="contrast-preview" id="contrastPreview">
+          <span class="preview-text" id="previewText">Aa</span>
+        </div>
+        <div class="contrast-info">
+          <div class="contrast-ratio-wrap">
+            <span class="contrast-ratio-label">Ratio</span>
+            <span class="contrast-ratio" id="contrastRatio">—</span>
+          </div>
+          <div class="wcag-badges">
+            <span class="wcag-badge" id="badgeAA">AA</span>
+            <span class="wcag-badge" id="badgeAAA">AAA</span>
+            <span class="wcag-badge sm" id="badgeAALg">AA Lg</span>
+            <span class="wcag-badge sm" id="badgeAAALg">AAA Lg</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── TAB: THEME GENERATOR ────────────────────────── -->
+    <div class="tab-panel" id="panel-theme">
+
+      <div class="section-label">Base Color</div>
+      <div class="theme-base-wrap">
+        <div class="color-field">
+          <input type="color" id="themeBase" value="#8b5cf6" />
+          <input type="text" id="themeBaseHex" value="#8b5cf6" maxlength="7" placeholder="#8b5cf6" />
+        </div>
+        <button class="btn-primary sm" id="btnGenTheme">Generate</button>
+      </div>
+
+      <div id="themePalette" class="theme-palette"></div>
+
+      <div id="themeActions" class="theme-actions" style="display:none;">
+        <button class="btn-secondary" id="btnCopyTheme">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy CSS Variables
+        </button>
+        <button class="btn-secondary" id="btnCopyTailwind">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Tailwind Config
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ── TAB: EXPORT ────────────────────────────────── -->
+    <div class="tab-panel" id="panel-export">
+
+      <div class="section-label">Export Current Color</div>
+
+      <div class="export-blocks" id="exportBlocks">
+        <!-- Filled by JS -->
+      </div>
+
+      <div class="export-actions">
+        <button class="btn-secondary" id="btnCopyAllExport">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy All
+        </button>
+        <button class="btn-secondary" id="btnDownloadCss">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download .css
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
