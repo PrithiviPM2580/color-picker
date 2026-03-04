@@ -569,19 +569,27 @@
         <button class="btn-secondary" id="btnUseCurrentContrast" style="font-size:11px;width:100%;margin-bottom:6px;">← Use current picker color as Fg</button>
       </div>
       <div class="tools-contrast-result">
-        <div class="contrast-ratio-wrap" style="margin-bottom:6px;">
+        <div class="contrast-ratio-wrap">
           <span class="contrast-ratio-label">Ratio</span>
           <span class="contrast-ratio" id="toolsContrastRatio">—</span>
         </div>
         <div class="wcag-badges-grid">
-          <span class="wcag-badge" id="wcagAANorm">AA Normal: —</span>
-          <span class="wcag-badge" id="wcagAALarge">AA Large: —</span>
-          <span class="wcag-badge" id="wcagAAA">AAA Normal: —</span>
-          <span class="wcag-badge" id="wcagAAALarge">AAA Large: —</span>
+          <span class="wcag-badge" id="wcagAANorm">AA Normal</span>
+          <span class="wcag-badge" id="wcagAALarge">AA Large</span>
+          <span class="wcag-badge" id="wcagAAA">AAA Normal</span>
+          <span class="wcag-badge" id="wcagAAALarge">AAA Large</span>
         </div>
-        <div id="toolsContrastPreview" class="contrast-preview" style="margin-top:8px;padding:8px;border-radius:var(--radius-sm);">
-          <span class="contrast-normal-text" style="font-size:13px;">Normal text preview</span>
-          <span class="contrast-bold-text" style="font-size:13px;font-weight:700;margin-left:8px;">Bold text</span>
+        <div id="toolsContrastPreview" class="contrast-preview">
+          <div class="contrast-preview-sample">
+            <div class="contrast-alpha-row">
+              <span class="contrast-sample-big contrast-normal-text">Aa</span>
+              <span class="contrast-sample-med contrast-normal-text">Bb</span>
+              <span class="contrast-sample-sm  contrast-normal-text">Cc</span>
+              <span class="contrast-sample-xs  contrast-normal-text">Dd Ee Ff</span>
+            </div>
+            <div class="contrast-text-row contrast-normal-text">The quick brown fox jumps over the lazy dog</div>
+            <div class="contrast-text-row contrast-bold-text">Pack my box with five dozen liquor jugs</div>
+          </div>
         </div>
       </div>
 

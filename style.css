@@ -2069,26 +2069,90 @@ body {
   background: var(--bg-surface2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 10px;
+  padding: 12px;
   margin-top: 6px;
   margin-bottom: 8px;
+}
+.tools-contrast-result .contrast-ratio-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.tools-contrast-result .contrast-ratio-label {
+  font: 500 11px/1 var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+.tools-contrast-result .contrast-ratio {
+  font: 700 22px/1 var(--font-mono);
+  color: var(--text-primary);
 }
 .wcag-badges-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  margin-bottom: 4px;
+  gap: 5px;
+  margin-bottom: 10px;
 }
-.wcag-badge.pass {
-  background: rgba(34, 197, 94, 0.2);
+.wcag-badges-grid .wcag-badge {
+  text-align: center;
+  padding: 5px 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-surface3);
+  color: var(--text-secondary);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.wcag-badges-grid .wcag-badge.pass {
+  background: rgba(34, 197, 94, 0.15);
   color: #4ade80;
   border-color: rgba(34, 197, 94, 0.35);
 }
-.wcag-badge.fail {
-  background: rgba(239, 68, 68, 0.15);
+.wcag-badges-grid .wcag-badge.fail {
+  background: rgba(239, 68, 68, 0.12);
   color: #f87171;
-  border-color: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.28);
 }
+#toolsContrastPreview {
+  width: 100%;
+  box-sizing: border-box;
+  height: auto;
+  min-height: 82px;
+  display: block;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: none;
+  flex-shrink: unset;
+}
+.contrast-preview-sample {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.contrast-alpha-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.contrast-sample-big { font-size: 32px; font-weight: 700; line-height: 1; }
+.contrast-sample-med { font-size: 22px; font-weight: 600; line-height: 1; }
+.contrast-sample-sm  { font-size: 15px; font-weight: 500; line-height: 1; }
+.contrast-sample-xs  { font-size: 12px; font-weight: 400; line-height: 1; }
+.contrast-text-row {
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.contrast-text-row.contrast-normal-text { font-weight: 400; }
+.contrast-text-row.contrast-bold-text   { font-weight: 700; }
 
 /* Feature 9: Color Wheel */
 .color-wheel-section {

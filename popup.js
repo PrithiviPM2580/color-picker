@@ -2393,10 +2393,9 @@ function initContrastChecker() {
     const preview = $('toolsContrastPreview');
     if (preview) {
       preview.style.background = bg.value;
-      const normalText = preview.querySelector('.contrast-normal-text');
-      const boldText = preview.querySelector('.contrast-bold-text');
-      if (normalText) normalText.style.color = fg.value;
-      if (boldText) boldText.style.color = fg.value;
+      preview.querySelectorAll('.contrast-normal-text, .contrast-bold-text').forEach(el => {
+        el.style.color = fg.value;
+      });
     }
     const badges = [
       { id: 'wcagAANorm',   pass: ev.aa,    label: 'AA Normal' },
@@ -2407,7 +2406,7 @@ function initContrastChecker() {
     badges.forEach(({ id, pass, label }) => {
       const el = $(id);
       if (el) {
-        el.textContent = label + ': ' + (pass ? 'PASS' : 'FAIL');
+        el.textContent = (pass ? '✓ ' : '✗ ') + label;
         el.classList.toggle('pass', pass);
         el.classList.toggle('fail', !pass);
       }
