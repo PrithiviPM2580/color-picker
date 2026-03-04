@@ -54,35 +54,82 @@
       <button class="tab active" data-tab="picker" role="tab">Picker</button>
       <button class="tab" data-tab="history" role="tab">History</button>
       <button class="tab" data-tab="theme" role="tab">Theme</button>
+      <button class="tab" data-tab="palette" role="tab">Palette</button>
       <button class="tab" data-tab="export" role="tab">Export</button>
+      <button class="tab" data-tab="tools" role="tab">Tools</button>
     </nav>
 
     <!-- ── TAB: PICKER ─────────────────────────────────── -->
     <div class="tab-panel active" id="panel-picker">
 
-      <!-- Color Preview -->
-      <div class="color-preview-wrap">
-        <div class="color-swatch" id="colorSwatch"></div>
-        <div class="color-meta">
-          <div class="hex-large" id="hexLarge">#8B5CF6</div>
-          <div class="rgb-small" id="rgbSmall">rgb(139, 92, 246)</div>
+      <!-- Color Hero Card -->
+      <div class="color-hero-card">
+        <div class="color-hero-swatch" id="colorSwatch">
+          <div id="swatchChecker" class="swatch-checker"></div>
+          <div id="swatchColorLayer" class="swatch-color-layer"></div>
+          <input type="color" id="swatchColorInput" value="#8b5cf6" title="Click to change color" />
+          <div class="color-hero-inner" id="colorHeroInner">
+            <div>
+              <div class="hex-large" id="hexLarge">#8B5CF6</div>
+              <div class="rgb-small" id="rgbSmall">rgb(139, 92, 246)</div>
+            </div>
+            <button class="btn-hero-copy" id="btnCopyHex" title="Copy HEX">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="color-hero-footer">
+          <div class="color-chips-row">
+            <span class="color-name-chip" id="colorNameDisplay">MediumSlateBlue</span>
+            <span class="color-temp-pill temp-cool" id="colorTempPill">🔮 Cool</span>
+            <span class="color-tw-chip" id="colorTailwindDisplay">violet-500</span>
+          </div>
+          <div class="color-pantone-display" id="colorPantoneDisplay">Pantone 072 C · RAL 5002</div>
+          <div class="alpha-row">
+            <span class="alpha-icon">α</span>
+            <input type="range" id="alphaSlider" class="alpha-slider" min="0" max="100" value="100" />
+            <span id="alphaValue" class="alpha-value-label">100%</span>
+          </div>
         </div>
       </div>
 
-      <!-- Pick Button -->
-      <button class="btn-pick" id="btnPick">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M2 13.5V20a2 2 0 0 0 2 2h.5"/>
-          <path d="M22 13.5V20a2 2 0 0 1-2 2h-.5"/>
-          <path d="M12 2 3 9l9 11 9-11z"/>
-          <path d="M12 2v20"/>
-        </svg>
-        Pick Color from Page
-      </button>
+      <!-- Action Buttons -->
+      <div class="picker-actions">
+        <button class="btn-pick" id="btnPick">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 13.5V20a2 2 0 0 0 2 2h.5"/>
+            <path d="M22 13.5V20a2 2 0 0 1-2 2h-.5"/>
+            <path d="M12 2 3 9l9 11 9-11z"/>
+            <path d="M12 2v20"/>
+          </svg>
+          Pick from Page
+        </button>
+        <button class="btn-icon-sq" id="btnRandom" title="Random color (R)">🎲</button>
+        <button class="btn-icon-sq" id="btnShare" title="Share color link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+            <polyline points="16 6 12 2 8 6"/>
+            <line x1="12" y1="2" x2="12" y2="15"/>
+          </svg>
+        </button>
+      </div>
+      <div class="kb-hint">P pick · C copy · R random · ←→ history</div>
 
-      <!-- Format Rows -->
+      <!-- Random Palette (collapsible) -->
+      <div class="random-palette-section">
+        <button class="btn-random-palette" id="btnRandomPalette">🎨 Random Palette</button>
+        <div id="randomPaletteSwatches" class="random-palette-swatches" style="display:none;"></div>
+      </div>
+
+      <!-- Color Formats -->
       <div class="section-label">Color Formats</div>
       <div class="formats-list">
+
+        <!-- Manual set row -->
+        <div class="format-row">
+          <span class="format-tag set-tag">SET</span>
+          <input type="text" id="manualColorInput" class="manual-inline-input" placeholder="#hex or rgb(r,g,b)" maxlength="30" />
+        </div>
 
         <div class="format-row">
           <span class="format-tag hex-tag">HEX</span>
@@ -124,11 +171,76 @@
           </button>
         </div>
 
+        <!-- Alpha format rows — shown when alpha < 1 -->
+        <div class="format-row alpha-format-row" id="rowRgba" style="display:none;">
+          <span class="format-tag rgba-tag">RGBA</span>
+          <span class="format-value mono" id="valRgba">rgba(139, 92, 246, 1.00)</span>
+          <button class="btn-copy" data-copy="valRgba" title="Copy RGBA">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+        <div class="format-row alpha-format-row" id="rowHsla" style="display:none;">
+          <span class="format-tag hsla-tag">HSLA</span>
+          <span class="format-value mono" id="valHsla">hsla(263, 90%, 66%, 1.00)</span>
+          <button class="btn-copy" data-copy="valHsla" title="Copy HSLA">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+        <div class="format-row alpha-format-row" id="rowHex8" style="display:none;">
+          <span class="format-tag hex8-tag">HEX8</span>
+          <span class="format-value mono" id="valHex8">#8B5CF6FF</span>
+          <button class="btn-copy" data-copy="valHex8" title="Copy 8-digit HEX">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+
       </div>
+
+      <!-- Color Compare (Feature 4) -->
+      <div class="compare-section" style="margin-top:12px;">
+        <div class="compare-toggle-header" id="compareToggle">Compare ▼</div>
+        <div id="comparePanel" style="display:none;">
+          <div class="compare-boxes">
+            <div class="compare-box">
+              <div class="compare-swatch" id="compareSwatchA"></div>
+              <div class="compare-label" id="compareLabelA">#8B5CF6</div>
+              <div class="compare-name" id="compareNameA">≈ Purple</div>
+            </div>
+            <div class="compare-vs">VS</div>
+            <div class="compare-box">
+              <div class="compare-swatch" id="compareSwatchB" style="position:relative;">
+                <input type="color" id="compareColorB" value="#ffffff" title="Pick color B" />
+              </div>
+              <div class="compare-label" id="compareLabelB">#FFFFFF</div>
+              <div class="compare-name" id="compareNameB">≈ White</div>
+            </div>
+          </div>
+          <div class="compare-stats" id="compareStats"></div>
+          <div class="compare-actions">
+            <button class="btn-secondary" id="btnSwapCompare" style="font-size:11px;">⇄ Swap</button>
+            <button class="btn-secondary" id="btnSetCompareA" style="font-size:11px;">← Set A to current</button>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ── TAB: HISTORY + WCAG ─────────────────────────── -->
     <div class="tab-panel" id="panel-history">
+
+      <!-- History Search -->
+      <div class="history-search-wrap">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="historySearch" class="history-search-input" placeholder="Search by hex…" />
+      </div>
+
+      <!-- Pinned Colors -->
+      <div id="pinnedSection" style="display:none;">
+        <div class="section-label">Pinned Colors</div>
+        <div class="history-grid" id="pinnedPalette"></div>
+      </div>
 
       <div class="section-label">
         Recent Colors
@@ -182,6 +294,18 @@
         </div>
       </div>
 
+      <div class="divider"></div>
+
+      <!-- Import Palette -->
+      <div class="section-label">
+        Import Palette
+        <button class="btn-text-sm" id="btnToggleImport" style="color:var(--text-secondary);">▸ Show</button>
+      </div>
+      <div id="importPanel" style="display:none;">
+        <textarea id="importPaletteInput" class="import-textarea" placeholder="#ff0000, #00ff00&#10;#0000ff, #ffff00"></textarea>
+        <button class="btn-primary sm" id="btnImportPalette" style="width:100%;margin-top:6px;">Import Colors</button>
+      </div>
+
     </div>
 
     <!-- ── TAB: THEME GENERATOR ────────────────────────── -->
@@ -214,6 +338,12 @@
     <!-- ── TAB: EXPORT ────────────────────────────────── -->
     <div class="tab-panel" id="panel-export">
 
+      <!-- Variable Name -->
+      <div class="export-varname-wrap">
+        <label class="export-varname-label">Variable name:</label>
+        <input type="text" id="exportVarName" class="export-varname-input" placeholder="--color-primary" value="--color-primary" maxlength="40" />
+      </div>
+
       <div class="section-label">Export Current Color</div>
 
       <div class="export-blocks" id="exportBlocks">
@@ -229,6 +359,104 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download .css
         </button>
+      </div>
+
+    </div>
+
+    <!-- ── TAB: PALETTE ──────────────────────────────── -->
+    <div class="tab-panel" id="panel-palette">
+
+      <div class="section-label">Palette Collections</div>
+      <div class="palette-new-wrap">
+        <input type="text" id="paletteNameInput" class="palette-name-input" placeholder="Collection name…" maxlength="30" />
+        <button class="btn-primary sm" id="btnNewPalette">New</button>
+      </div>
+      <div id="paletteCollectionList" class="palette-collection-list">
+        <div class="history-empty">No collections yet</div>
+      </div>
+
+    </div>
+
+    <!-- ── TAB: TOOLS ────────────────────────────────── -->
+    <div class="tab-panel" id="panel-tools">
+
+      <!-- Gradient Builder -->
+      <div class="section-label">Gradient Builder</div>
+      <div id="gradientStops" class="gradient-stops-list"></div>
+      <button class="btn-secondary" id="btnAddGradStop" style="margin-bottom:10px;">+ Add Stop</button>
+      <div class="gradient-preview-bar" id="gradientPreviewBar"></div>
+      <div class="gradient-dir-wrap">
+        <label class="contrast-label" style="flex-shrink:0;">Direction</label>
+        <select id="gradientDirection" class="gradient-dir-select">
+          <option value="to right">Linear 0°</option>
+          <option value="45deg">Linear 45°</option>
+          <option value="to bottom" selected>Linear 90°</option>
+          <option value="135deg">Linear 135°</option>
+          <option value="to left">Linear 180°</option>
+          <option value="radial">Radial</option>
+        </select>
+      </div>
+      <div class="gradient-css-block export-block" style="margin-bottom:10px;">
+        <div class="export-block-header">
+          <span class="export-block-title">CSS Output</span>
+          <button class="btn-copy" id="btnCopyGradient">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+        <textarea id="gradientCssOutput" class="gradient-css-textarea" readonly></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Color Blindness Simulator -->
+      <div class="section-label">Color Blindness Simulator</div>
+      <div class="colorblind-row" id="colorblindSwatches">
+        <div class="colorblind-item">
+          <div class="colorblind-swatch" id="cbNormal"></div>
+          <div class="colorblind-label">Normal</div>
+        </div>
+        <div class="colorblind-item">
+          <div class="colorblind-swatch" id="cbDeuteranopia"></div>
+          <div class="colorblind-label">Deuteranopia</div>
+        </div>
+        <div class="colorblind-item">
+          <div class="colorblind-swatch" id="cbProtanopia"></div>
+          <div class="colorblind-label">Protanopia</div>
+        </div>
+        <div class="colorblind-item">
+          <div class="colorblind-swatch" id="cbTritanopia"></div>
+          <div class="colorblind-label">Tritanopia</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Image Eyedropper -->
+      <div class="section-label">Pick from Image</div>
+      <div id="imageDropZone" class="image-drop-zone">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="m21 15-5-5L5 21"/>
+        </svg>
+        <span>Drop image or click to upload</span>
+        <input type="file" id="imageFileInput" accept="image/*" style="display:none;" />
+      </div>
+      <canvas id="imagePickerCanvas" class="image-picker-canvas" style="display:none;cursor:crosshair;"></canvas>
+      <div id="imagePickedHex" class="image-picked-hex" style="display:none;"></div>
+      <button id="btnClearImage" class="btn-secondary" style="display:none;margin-top:6px;">✕ Clear Image</button>
+
+      <!-- Page Color Audit (Feature 5) -->
+      <div class="divider"></div>
+      <div class="section-label">Page Color Audit</div>
+      <button class="btn-secondary" id="btnScanPage" style="width:100%;margin-bottom:8px;">🔍 Scan Page Colors</button>
+      <div id="auditStatus" class="audit-status" style="display:none;">
+        <div class="audit-spinner"></div>
+        <span>Scanning page…</span>
+      </div>
+      <div id="auditResult" style="display:none;">
+        <div class="audit-count" id="auditCount"></div>
+        <div class="audit-grid" id="auditGrid"></div>
       </div>
 
     </div>

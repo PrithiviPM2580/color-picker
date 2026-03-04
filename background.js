@@ -1,5 +1,23 @@
 // background.js — Service Worker for ColorPick Pro (Manifest V3)
 
+// ── Feature 10: Context Menu ─────────────────────────
+function setupContextMenu() {
+  chrome.contextMenus.create({
+    id: 'copyElementColor',
+    title: 'Copy element color',
+    contexts: ['all']
+  }, () => { if (chrome.runtime.lastError) { /* ignore duplicate on restart */ } });
+}
+chrome.runtime.onInstalled.addListener(setupContextMenu);
+// Re-register on service worker start
+try { setupContextMenu(); } catch (_) {}
+
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId === 'copyElementColor' && tab?.id) {
+    try { await chrome.tabs.sendMessage(tab.id, { action: 'getElementColor' }); } catch (_) {}
+  }
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'startPick') {
     handleStartPick(message, sendResponse);

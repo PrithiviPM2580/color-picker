@@ -3,7 +3,7 @@
   "name": "ColorPick Pro",
   "version": "1.0.0",
   "description": "Advanced pixel-level color picker with OKLCH, WCAG contrast checker, theme generator and export features.",
-  "permissions": ["activeTab", "storage", "scripting", "tabs"],
+  "permissions": ["activeTab", "storage", "scripting", "tabs", "contextMenus"],
   "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html",

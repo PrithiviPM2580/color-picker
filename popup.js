@@ -117,7 +117,43 @@ const ColorConverter = {
 };
 
 // ═══════════════════════════════════════════════════
-// WCAG CONTRAST CHECKER
+// FEATURE 2: CSS COLOR NAMES
+// ═══════════════════════════════════════════════════
+const ColorNames = (function(){
+  const d=[['aliceblue',240,248,255],['antiquewhite',250,235,215],['aqua',0,255,255],['aquamarine',127,255,212],['azure',240,255,255],['beige',245,245,220],['bisque',255,228,196],['black',0,0,0],['blanchedalmond',255,235,205],['blue',0,0,255],['blueviolet',138,43,226],['brown',165,42,42],['burlywood',222,184,135],['cadetblue',95,158,160],['chartreuse',127,255,0],['chocolate',210,105,30],['coral',255,127,80],['cornflowerblue',100,149,237],['cornsilk',255,248,220],['crimson',220,20,60],['cyan',0,255,255],['darkblue',0,0,139],['darkcyan',0,139,139],['darkgoldenrod',184,134,11],['darkgray',169,169,169],['darkgreen',0,100,0],['darkkhaki',189,183,107],['darkmagenta',139,0,139],['darkolivegreen',85,107,47],['darkorange',255,140,0],['darkorchid',153,50,204],['darkred',139,0,0],['darksalmon',233,150,122],['darkseagreen',143,188,143],['darkslateblue',72,61,139],['darkslategray',47,79,79],['darkturquoise',0,206,209],['darkviolet',148,0,211],['deeppink',255,20,147],['deepskyblue',0,191,255],['dimgray',105,105,105],['dodgerblue',30,144,255],['firebrick',178,34,34],['floralwhite',255,250,240],['forestgreen',34,139,34],['fuchsia',255,0,255],['gainsboro',220,220,220],['ghostwhite',248,248,255],['gold',255,215,0],['goldenrod',218,165,32],['gray',128,128,128],['green',0,128,0],['greenyellow',173,255,47],['honeydew',240,255,240],['hotpink',255,105,180],['indianred',205,92,92],['indigo',75,0,130],['ivory',255,255,240],['khaki',240,230,140],['lavender',230,230,250],['lavenderblush',255,240,245],['lawngreen',124,252,0],['lemonchiffon',255,250,205],['lightblue',173,216,230],['lightcoral',240,128,128],['lightcyan',224,255,255],['lightgoldenrodyellow',250,250,210],['lightgray',211,211,211],['lightgreen',144,238,144],['lightpink',255,182,193],['lightsalmon',255,160,122],['lightseagreen',32,178,170],['lightskyblue',135,206,250],['lightslategray',119,136,153],['lightsteelblue',176,196,222],['lightyellow',255,255,224],['lime',0,255,0],['limegreen',50,205,50],['linen',250,240,230],['magenta',255,0,255],['maroon',128,0,0],['mediumaquamarine',102,205,170],['mediumblue',0,0,205],['mediumorchid',186,85,211],['mediumpurple',147,112,219],['mediumseagreen',60,179,113],['mediumslateblue',123,104,238],['mediumspringgreen',0,250,154],['mediumturquoise',72,209,204],['mediumvioletred',199,21,133],['midnightblue',25,25,112],['mintcream',245,255,250],['mistyrose',255,228,225],['moccasin',255,228,181],['navajowhite',255,222,173],['navy',0,0,128],['oldlace',253,245,230],['olive',128,128,0],['olivedrab',107,142,35],['orange',255,165,0],['orangered',255,69,0],['orchid',218,112,214],['palegoldenrod',238,232,170],['palegreen',152,251,152],['paleturquoise',175,238,238],['palevioletred',219,112,147],['papayawhip',255,239,213],['peachpuff',255,218,185],['peru',205,133,63],['pink',255,192,203],['plum',221,160,221],['powderblue',176,224,230],['purple',128,0,128],['red',255,0,0],['rosybrown',188,143,143],['royalblue',65,105,225],['saddlebrown',139,69,19],['salmon',250,128,114],['sandybrown',244,164,96],['seagreen',46,139,87],['seashell',255,245,238],['sienna',160,82,45],['silver',192,192,192],['skyblue',135,206,235],['slateblue',106,90,205],['slategray',112,128,144],['snow',255,250,250],['springgreen',0,255,127],['steelblue',70,130,180],['tan',210,180,140],['teal',0,128,128],['thistle',216,191,216],['tomato',255,99,71],['turquoise',64,224,208],['violet',238,130,238],['wheat',245,222,179],['white',255,255,255],['whitesmoke',245,245,245],['yellow',255,255,0],['yellowgreen',154,205,50]];
+  return {
+    findNearest(r,g,b){
+      let best=d[0][0],bd=Infinity;
+      for(const[n,cr,cg,cb] of d){const dd=(r-cr)**2+(g-cg)**2+(b-cb)**2;if(dd<bd){bd=dd;best=n;}}
+      return best.charAt(0).toUpperCase()+best.slice(1);
+    }
+  };
+})();
+
+// ═══════════════════════════════════════════════════
+// FEATURE 7: TAILWIND COLOR LOOKUP
+// ═══════════════════════════════════════════════════
+const TailwindColors = (function(){
+  const h2=[['slate-50','#f8fafc'],['slate-100','#f1f5f9'],['slate-200','#e2e8f0'],['slate-300','#cbd5e1'],['slate-400','#94a3b8'],['slate-500','#64748b'],['slate-600','#475569'],['slate-700','#334155'],['slate-800','#1e293b'],['slate-900','#0f172a'],['gray-50','#f9fafb'],['gray-100','#f3f4f6'],['gray-200','#e5e7eb'],['gray-300','#d1d5db'],['gray-400','#9ca3af'],['gray-500','#6b7280'],['gray-600','#4b5563'],['gray-700','#374151'],['gray-800','#1f2937'],['gray-900','#111827'],['red-50','#fef2f2'],['red-100','#fee2e2'],['red-200','#fecaca'],['red-300','#fca5a5'],['red-400','#f87171'],['red-500','#ef4444'],['red-600','#dc2626'],['red-700','#b91c1c'],['red-800','#991b1b'],['red-900','#7f1d1d'],['orange-50','#fff7ed'],['orange-100','#ffedd5'],['orange-200','#fed7aa'],['orange-300','#fdba74'],['orange-400','#fb923c'],['orange-500','#f97316'],['orange-600','#ea580c'],['orange-700','#c2410c'],['orange-800','#9a3412'],['orange-900','#7c2d12'],['yellow-50','#fefce8'],['yellow-100','#fef9c3'],['yellow-200','#fef08a'],['yellow-300','#fde047'],['yellow-400','#facc15'],['yellow-500','#eab308'],['yellow-600','#ca8a04'],['yellow-700','#a16207'],['yellow-800','#854d0e'],['yellow-900','#713f12'],['green-50','#f0fdf4'],['green-100','#dcfce7'],['green-200','#bbf7d0'],['green-300','#86efac'],['green-400','#4ade80'],['green-500','#22c55e'],['green-600','#16a34a'],['green-700','#15803d'],['green-800','#166534'],['green-900','#14532d'],['blue-50','#eff6ff'],['blue-100','#dbeafe'],['blue-200','#bfdbfe'],['blue-300','#93c5fd'],['blue-400','#60a5fa'],['blue-500','#3b82f6'],['blue-600','#2563eb'],['blue-700','#1d4ed8'],['blue-800','#1e40af'],['blue-900','#1e3a8a'],['indigo-50','#eef2ff'],['indigo-100','#e0e7ff'],['indigo-200','#c7d2fe'],['indigo-300','#a5b4fc'],['indigo-400','#818cf8'],['indigo-500','#6366f1'],['indigo-600','#4f46e5'],['indigo-700','#4338ca'],['indigo-800','#3730a3'],['indigo-900','#312e81'],['violet-50','#f5f3ff'],['violet-100','#ede9fe'],['violet-200','#ddd6fe'],['violet-300','#c4b5fd'],['violet-400','#a78bfa'],['violet-500','#8b5cf6'],['violet-600','#7c3aed'],['violet-700','#6d28d9'],['violet-800','#5b21b6'],['violet-900','#4c1d95'],['pink-50','#fdf2f8'],['pink-100','#fce7f3'],['pink-200','#fbcfe8'],['pink-300','#f9a8d4'],['pink-400','#f472b6'],['pink-500','#ec4899'],['pink-600','#db2777'],['pink-700','#be185d'],['pink-800','#9d174d'],['pink-900','#831843'],['teal-50','#f0fdfa'],['teal-100','#ccfbf1'],['teal-200','#99f6e4'],['teal-300','#5eead4'],['teal-400','#2dd4bf'],['teal-500','#14b8a6'],['teal-600','#0d9488'],['teal-700','#0f766e'],['teal-800','#115e59'],['teal-900','#134e4a'],['cyan-50','#ecfeff'],['cyan-100','#cffafe'],['cyan-200','#a5f3fc'],['cyan-300','#67e8f9'],['cyan-400','#22d3ee'],['cyan-500','#06b6d4'],['cyan-600','#0891b2'],['cyan-700','#0e7490'],['cyan-800','#155e75'],['cyan-900','#164e63'],['purple-50','#faf5ff'],['purple-100','#f3e8ff'],['purple-200','#e9d5ff'],['purple-300','#d8b4fe'],['purple-400','#c084fc'],['purple-500','#a855f7'],['purple-600','#9333ea'],['purple-700','#7e22ce'],['purple-800','#6b21a8'],['purple-900','#581c87'],['rose-50','#fff1f2'],['rose-100','#ffe4e6'],['rose-200','#fecdd3'],['rose-300','#fda4af'],['rose-400','#fb7185'],['rose-500','#f43f5e'],['rose-600','#e11d48'],['rose-700','#be123c'],['rose-800','#9f1239'],['rose-900','#881337']];
+  const p=v=>parseInt(v,16);
+  const data=h2.map(([n,h])=>[n,p(h.slice(1,3)),p(h.slice(3,5)),p(h.slice(5,7))]);
+  return {
+    findNearest(r,g,b){
+      let best=data[0][0],bd=Infinity;
+      for(const[n,cr,cg,cb] of data){const dd=(r-cr)**2+(g-cg)**2+(b-cb)**2;if(dd<bd){bd=dd;best=n;}}
+      return best;
+    }
+  };
+})();
+
+// ═══════════════════════════════════════════════════
+// FEATURE 14: PANTONE & RAL LOOKUP
+// ═══════════════════════════════════════════════════
+const PantoneData=[['032 C',255,50,50],['072 C',16,6,159],['109 C',255,213,0],['1345 C',255,198,139],['1375 C',255,163,0],['1485 C',255,143,51],['1495 C',255,127,17],['1505 C',251,95,0],['1525 C',210,73,42],['1535 C',185,55,28],['1545 C',122,27,13],['1555 C',243,172,130],['1565 C',249,148,84],['1575 C',248,122,44],['1585 C',244,99,7],['1595 C',214,88,10],['1605 C',178,71,16],['1615 C',148,57,11],['165 C',255,104,31],['1655 C',255,89,26],['1665 C',234,77,21],['1675 C',195,64,24],['1685 C',165,53,22],['1765 C',255,162,176],['1775 C',255,133,154],['1785 C',255,82,106],['1795 C',220,50,66],['1805 C',186,24,44],['1815 C',148,13,28],['185 C',213,43,30],['1865 C',255,171,180],['1875 C',255,147,163],['1885 C',255,115,135],['1895 C',255,88,113],['1905 C',243,56,87],['1915 C',213,36,67],['192 C',227,27,35],['193 C',199,38,57],['194 C',151,23,41],['195 C',116,11,28],['202 C',152,50,64],['204 C',234,86,117],['205 C',243,117,148],['206 C',224,60,102],['207 C',195,44,96],['208 C',156,29,73],['209 C',126,22,60],['210 C',255,138,185],['211 C',255,111,170],['212 C',255,82,152]];
+const RALData=[['1000','Green beige',190,189,127],['1001','Beige',205,186,136],['1002','Sand yellow',206,184,112],['1003','Signal yellow',255,214,0],['1004','Golden yellow',221,181,0],['1005','Honey yellow',202,164,0],['1006','Maize yellow',228,177,0],['1007','Daffodil yellow',233,175,0],['1011','Brown beige',171,129,79],['1012','Lemon yellow',221,196,0],['1013','Oyster white',229,220,194],['1014','Ivory',219,209,179],['1015','Light ivory',230,225,201],['1016','Sulfur yellow',241,221,56],['1017','Saffron yellow',246,182,90],['1018','Zinc yellow',250,210,0],['1019','Grey beige',160,143,120],['1020','Olive yellow',155,148,83],['2000','Yellow orange',218,120,0],['2001','Red orange',186,71,33],['2002','Vermilion',193,65,28],['2003','Pastel orange',255,126,0],['2004','Pure orange',232,93,0],['2005','Luminous orange',255,77,0],['3000','Flame red',162,35,29],['3001','Signal red',162,35,29],['3002','Carmine red',162,35,29],['3003','Ruby red',139,14,14],['3004','Purple red',110,14,14],['3005','Wine red',90,11,17],['5000','Violet blue',33,69,104],['5001','Green blue',25,73,93],['5002','Ultramarine blue',0,50,131],['5003','Sapphire blue',15,58,96],['5004','Black blue',12,20,37],['5005','Signal blue',0,83,135],['6000','Patina green',49,102,80],['6001','Emerald green',45,93,58],['6002','Leaf green',36,94,41],['6003','Olive green',80,89,55],['6004','Blue green',13,73,66]];
+
+function findNearestPantone(r,g,b){let best=PantoneData[0],bd=Infinity;for(const p of PantoneData){const d=(r-p[1])**2+(g-p[2])**2+(b-p[3])**2;if(d<bd){bd=d;best=p;}}return best[0];}
+function findNearestRAL(r,g,b){let best=RALData[0],bd=Infinity;for(const p of RALData){const d=(r-p[2])**2+(g-p[3])**2+(b-p[4])**2;if(d<bd){bd=d;best=p;}}return best[0];}
 // ═══════════════════════════════════════════════════
 const WCAGChecker = {
   _luminance(r, g, b) {
@@ -238,6 +274,14 @@ const ExportManager = {
       {
         title: 'All Formats',
         content: `${hex}\n${rgb}\n${hsl}\n${oklch}`
+      },
+      {
+        title: 'iOS (Swift)',
+        content: `UIColor(red: ${(r/255).toFixed(3)}, green: ${(g/255).toFixed(3)}, blue: ${(b/255).toFixed(3)}, alpha: 1.0)`
+      },
+      {
+        title: 'Android (Kotlin)',
+        content: `Color(0xFF${hex.slice(1).toUpperCase()})\ncolorResource = R.color.primary`
       }
     ];
   },
@@ -275,6 +319,16 @@ let currentColor = { r: 139, g: 92, b: 246 };
 let colorHistory = [];
 let themePalette = null;
 let isDarkMode   = true;
+let pinnedColors  = [];
+let palettes      = [];
+let gradStops     = [];
+let exportVarName = '--color-primary';
+// Feature 3: alpha state
+let currentAlpha = 1.0;
+// Feature 9: history navigation index
+let historyIndex = -1;
+// Feature 4: compare state
+let compareColorB = { r: 255, g: 255, b: 255 };
 
 const $ = id => document.getElementById(id);
 
@@ -296,7 +350,7 @@ function toggleTheme() {
 // ═══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
   // Load persisted data
-  const data = await chrome.storage.local.get(['pendingColor', 'colorHistory', 'uiTheme']);
+  const data = await chrome.storage.local.get(['pendingColor', 'colorHistory', 'uiTheme', 'pinnedColors', 'palettes', 'exportVarName']);
 
   // Apply saved theme (default: dark)
   applyTheme(data.uiTheme !== 'light');
@@ -309,6 +363,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   colorHistory = data.colorHistory || [];
+  pinnedColors  = data.pinnedColors || [];
+  palettes      = data.palettes     || [];
+  if (data.exportVarName) {
+    exportVarName = data.exportVarName;
+    $('exportVarName').value = exportVarName;
+  }
 
   // Initial renders
   updateColorDisplay(currentColor);
@@ -316,6 +376,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   initWcag();
   initTheme();
   renderExport();
+  renderPaletteCollections();
+  initGradientBuilder();
+  updateColorBlindness();
 
   // Tab navigation
   document.querySelectorAll('.tab').forEach(tab => {
@@ -327,6 +390,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Pick button
   $('btnPick').addEventListener('click', startPicking);
+
+  // Hero copy hex button
+  $('btnCopyHex').addEventListener('click', () => {
+    const hex = ColorConverter.toHex(currentColor.r, currentColor.g, currentColor.b);
+    copyText(hex.toUpperCase(), $('btnCopyHex'));
+  });
+
+  // Swatch color input (manual color picker)
+  $('swatchColorInput').addEventListener('input', e => {
+    const rgb = ColorConverter.hexToRgb(e.target.value);
+    if (rgb) {
+      currentColor = rgb;
+      updateColorDisplay(rgb);
+    }
+  });
+  $('swatchColorInput').addEventListener('change', e => {
+    const rgb = ColorConverter.hexToRgb(e.target.value);
+    if (rgb) {
+      colorHistory.unshift(rgb);
+      if (colorHistory.length > 20) colorHistory.pop();
+      chrome.storage.local.set({ colorHistory });
+      renderHistory();
+    }
+  });
 
   // Copy buttons (format rows)
   document.querySelectorAll('.btn-copy[data-copy]').forEach(btn => {
@@ -357,6 +444,116 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('btnCopyAllExport').addEventListener('click', copyAllExport);
   $('btnDownloadCss').addEventListener('click', downloadCss);
 
+  // Manual color input
+  $('manualColorInput').addEventListener('keydown', e => { if (e.key === 'Enter') applyManualColor(); });
+  $('manualColorInput').addEventListener('blur', applyManualColor);
+
+  // Share color link
+  $('btnShare').addEventListener('click', shareColorLink);
+
+  // History search
+  $('historySearch').addEventListener('input', () => renderHistory());
+
+  // Import palette
+  $('btnToggleImport').addEventListener('click', toggleImportPanel);
+  $('btnImportPalette').addEventListener('click', importPalette);
+
+  // Export variable name
+  $('exportVarName').addEventListener('input', e => {
+    exportVarName = e.target.value.trim() || '--color-primary';
+    chrome.storage.local.set({ exportVarName });
+    renderExport();
+  });
+
+  // Palette collections
+  $('btnNewPalette').addEventListener('click', createPaletteCollection);
+
+  // Gradient builder
+  $('btnAddGradStop').addEventListener('click', addGradientStop);
+  $('gradientDirection').addEventListener('change', renderGradient);
+  $('btnCopyGradient').addEventListener('click', copyGradientCss);
+
+  // Color blindness swatch clicks
+  ['cbNormal', 'cbDeuteranopia', 'cbProtanopia', 'cbTritanopia'].forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('click', () => {
+      const r = parseInt(el.dataset.r), g = parseInt(el.dataset.g), b = parseInt(el.dataset.b);
+      if (!isNaN(r)) {
+        currentColor = { r, g, b };
+        colorHistory.unshift({ r, g, b });
+        if (colorHistory.length > 20) colorHistory.pop();
+        chrome.storage.local.set({ colorHistory });
+        updateColorDisplay(currentColor);
+        renderHistory();
+        showToast('Loaded ' + ColorConverter.toHex(r, g, b).toUpperCase(), 'success');
+      }
+    });
+  });
+
+  // Image eyedropper
+  initImagePicker();
+
+  // Feature 1: Random color & palette
+  $('btnRandom').addEventListener('click', () => generateRandomColor());
+  $('btnRandomPalette').addEventListener('click', toggleRandomPalette);
+
+  // Feature 3: Alpha slider
+  $('alphaSlider').addEventListener('input', e => {
+    currentAlpha = parseInt(e.target.value) / 100;
+    $('alphaValue').textContent = e.target.value + '%';
+    updateColorDisplay(currentColor);
+  });
+
+  // Feature 4: Compare section
+  $('compareToggle').addEventListener('click', toggleCompare);
+  $('compareColorB').addEventListener('input', e => {
+    const rgb = ColorConverter.hexToRgb(e.target.value);
+    if (rgb) { compareColorB = rgb; updateCompare(); }
+  });
+  $('btnSwapCompare').addEventListener('click', swapCompare);
+  $('btnSetCompareA').addEventListener('click', () => { updateCompare(); showToast('A updated', 'success'); });
+
+  // Feature 5: Page Color Audit
+  $('btnScanPage').addEventListener('click', scanPageColors);
+
+  // Feature 9: Keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    const tag = (document.activeElement?.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+    switch (e.key) {
+      case 'p': case 'P': e.preventDefault(); startPicking(); break;
+      case 'c': case 'C': {
+        e.preventDefault();
+        const hex = ColorConverter.toHex(currentColor.r, currentColor.g, currentColor.b);
+        navigator.clipboard.writeText(hex.toUpperCase())
+          .then(() => showToast('Copied ' + hex.toUpperCase(), 'success'));
+        break;
+      }
+      case 'r': case 'R': e.preventDefault(); generateRandomColor(); break;
+      case 'ArrowLeft': {
+        e.preventDefault();
+        if (!colorHistory.length) break;
+        historyIndex = Math.min(historyIndex + 1, colorHistory.length - 1);
+        const c = colorHistory[historyIndex];
+        currentColor = { r: c.r, g: c.g, b: c.b };
+        updateColorDisplay(currentColor);
+        break;
+      }
+      case 'ArrowRight': {
+        e.preventDefault();
+        if (historyIndex <= 0) { historyIndex = -1; break; }
+        historyIndex--;
+        if (historyIndex >= 0) {
+          const c = colorHistory[historyIndex];
+          currentColor = { r: c.r, g: c.g, b: c.b };
+          updateColorDisplay(currentColor);
+        }
+        break;
+      }
+      case 'Escape': document.activeElement?.blur(); break;
+    }
+  });
+
   // Listen for new picks while popup is open
   chrome.storage.onChanged.addListener(onStorageChange);
 });
@@ -371,7 +568,24 @@ function updateColorDisplay({ r, g, b }) {
   const hsl    = ColorConverter.toHsl(r, g, b);
   const oklch  = ColorConverter.toOklch(r, g, b);
 
-  $('colorSwatch').style.background = hex;
+  // Alpha-aware swatch with checkerboard
+  const swatchColorLayer = $('swatchColorLayer');
+  const swatchChecker = $('swatchChecker');
+  if (currentAlpha < 1) {
+    swatchColorLayer.style.background = `rgba(${r},${g},${b},${currentAlpha.toFixed(2)})`;
+    swatchChecker.style.display = 'block';
+  } else {
+    swatchColorLayer.style.background = hex;
+    swatchChecker.style.display = 'none';
+  }
+  $('swatchColorInput').value = hex;
+
+  // Auto-contrasting text color on hero banner
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  const heroText = luminance > 0.55 ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.95)';
+  const heroInner = $('colorHeroInner');
+  if (heroInner) heroInner.style.color = heroText;
+
   $('hexLarge').textContent  = hex.toUpperCase();
   $('rgbSmall').textContent  = rgb;
   $('valHex').textContent    = hex.toUpperCase();
@@ -379,6 +593,38 @@ function updateColorDisplay({ r, g, b }) {
   $('valNorm').textContent   = norm;
   $('valHsl').textContent    = hsl;
   $('valOklch').textContent  = oklch;
+
+  // Feature 3: Alpha format rows
+  const { h: hslH, s: hslS, l: hslL } = ColorConverter._rgbToHslVals(r, g, b);
+  const alphaStr = currentAlpha.toFixed(2);
+  const alphaHex = Math.round(currentAlpha * 255).toString(16).padStart(2, '0').toUpperCase();
+  $('valRgba').textContent = `rgba(${r}, ${g}, ${b}, ${alphaStr})`;
+  $('valHsla').textContent = `hsla(${Math.round(hslH)}, ${Math.round(hslS)}%, ${Math.round(hslL)}%, ${alphaStr})`;
+  $('valHex8').textContent = `${hex.toUpperCase()}${alphaHex}`;
+  const showAlpha = currentAlpha < 1;
+  $('rowRgba').style.display = showAlpha ? '' : 'none';
+  $('rowHsla').style.display = showAlpha ? '' : 'none';
+  $('rowHex8').style.display = showAlpha ? '' : 'none';
+
+  // Feature 2: CSS color name
+  const colorNameEl = $('colorNameDisplay');
+  if (colorNameEl) colorNameEl.textContent = '≈ ' + ColorNames.findNearest(r, g, b);
+
+  // Feature 6: Color temperature
+  const tempEl = $('colorTempPill');
+  if (tempEl) {
+    const temp = getColorTemperature(hslH);
+    tempEl.textContent = temp.label;
+    tempEl.className = 'color-temp-pill ' + temp.cls;
+  }
+
+  // Feature 7: Tailwind class
+  const tailwindEl = $('colorTailwindDisplay');
+  if (tailwindEl) tailwindEl.textContent = '≈ ' + TailwindColors.findNearest(r, g, b);
+
+  // Feature 14: Pantone & RAL
+  const pantoneEl = $('colorPantoneDisplay');
+  if (pantoneEl) pantoneEl.textContent = '≈ Pantone ' + findNearestPantone(r, g, b) + ' · RAL ' + findNearestRAL(r, g, b);
 
   // Auto-fill WCAG foreground
   $('fgColor').value = hex;
@@ -390,6 +636,11 @@ function updateColorDisplay({ r, g, b }) {
   $('themeBaseHex').value = hex;
 
   renderExport();
+  updateColorBlindness();
+
+  // Feature 4: Update compare if panel is open
+  const comparePanel = $('comparePanel');
+  if (comparePanel && comparePanel.style.display !== 'none') updateCompare();
 }
 
 // ═══════════════════════════════════════════════════
@@ -448,6 +699,11 @@ async function startPicking() {
 // ═══════════════════════════════════════════════════
 function renderHistory() {
   const grid = $('historyPalette');
+  const query = ($('historySearch') ? $('historySearch').value : '').toLowerCase().trim();
+
+  // Render pinned section
+  renderPinnedSection();
+
   grid.innerHTML = '';
 
   if (!colorHistory.length) {
@@ -455,20 +711,93 @@ function renderHistory() {
     return;
   }
 
-  colorHistory.forEach(({ r, g, b }) => {
+  let visibleCount = 0;
+  colorHistory.forEach(({ r, g, b, timestamp }) => {
     const hex = ColorConverter.toHex(r, g, b);
+    if (query && !hex.toLowerCase().includes(query)) return;
+    visibleCount++;
+
     const swatch = document.createElement('div');
     swatch.className = 'history-swatch';
     swatch.style.background = hex;
-    swatch.title = hex.toUpperCase();
+    const timeStr = timestamp ? relativeTime(timestamp) : '';
+    swatch.title = hex.toUpperCase() + (timeStr ? ' • ' + timeStr : '');
+    swatch.dataset.hex = hex.toLowerCase();
+    if (timeStr) swatch.dataset.time = timeStr;
+
+    const isPinned = pinnedColors.some(p => ColorConverter.toHex(p.r, p.g, p.b) === hex);
+    const star = document.createElement('div');
+    star.className = 'pin-star' + (isPinned ? ' pinned' : '');
+    star.textContent = isPinned ? '★' : '☆';
+    star.title = isPinned ? 'Unpin' : 'Pin';
+    star.addEventListener('click', e => { e.stopPropagation(); togglePin(r, g, b); });
+
     swatch.addEventListener('click', () => {
       currentColor = { r, g, b };
       updateColorDisplay(currentColor);
       switchTab('picker');
       showToast('Loaded ' + hex.toUpperCase(), 'success');
     });
+
+    swatch.appendChild(star);
     grid.appendChild(swatch);
   });
+
+  if (visibleCount === 0 && query) {
+    grid.innerHTML = '<div class="history-empty">No results</div>';
+  }
+}
+
+function renderPinnedSection() {
+  const section = $('pinnedSection');
+  const grid = $('pinnedPalette');
+  if (!section || !grid) return;
+
+  if (!pinnedColors.length) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = '';
+  grid.innerHTML = '';
+
+  pinnedColors.forEach(({ r, g, b }) => {
+    const hex = ColorConverter.toHex(r, g, b);
+    const swatch = document.createElement('div');
+    swatch.className = 'history-swatch';
+    swatch.style.background = hex;
+    swatch.title = hex.toUpperCase();
+
+    const star = document.createElement('div');
+    star.className = 'pin-star pinned';
+    star.textContent = '★';
+    star.title = 'Unpin';
+    star.addEventListener('click', e => { e.stopPropagation(); togglePin(r, g, b); });
+
+    swatch.addEventListener('click', () => {
+      currentColor = { r, g, b };
+      updateColorDisplay(currentColor);
+      switchTab('picker');
+      showToast('Loaded ' + hex.toUpperCase(), 'success');
+    });
+
+    swatch.appendChild(star);
+    grid.appendChild(swatch);
+  });
+}
+
+function togglePin(r, g, b) {
+  const hex = ColorConverter.toHex(r, g, b);
+  const idx = pinnedColors.findIndex(p => ColorConverter.toHex(p.r, p.g, p.b) === hex);
+  if (idx >= 0) {
+    pinnedColors.splice(idx, 1);
+    showToast('Unpinned ' + hex.toUpperCase());
+  } else {
+    pinnedColors.push({ r, g, b });
+    showToast('Pinned ' + hex.toUpperCase(), 'success');
+  }
+  chrome.storage.local.set({ pinnedColors });
+  renderHistory();
 }
 
 async function clearHistory() {
@@ -640,7 +969,12 @@ function copyThemeTailwind() {
 // ═══════════════════════════════════════════════════
 function renderExport() {
   const { r, g, b } = currentColor;
-  const blocks = ExportManager.blocks(r, g, b);
+  const varName = exportVarName || '--color-primary';
+  const rawBlocks = ExportManager.blocks(r, g, b);
+  const blocks = rawBlocks.map(({ title, content }) => ({
+    title,
+    content: content.replace(/--color-primary/g, varName)
+  }));
   const container = $('exportBlocks');
   container.innerHTML = '';
 
@@ -678,14 +1012,17 @@ function renderExport() {
 
 function copyAllExport() {
   const { r, g, b } = currentColor;
-  navigator.clipboard.writeText(ExportManager.allText(r, g, b))
+  const varName = exportVarName || '--color-primary';
+  const text = ExportManager.allText(r, g, b).replace(/--color-primary/g, varName);
+  navigator.clipboard.writeText(text)
     .then(() => showToast('All formats copied!', 'success'))
     .catch(() => showToast('Copy failed', 'error'));
 }
 
 function downloadCss() {
   const { r, g, b } = currentColor;
-  const text = ExportManager.allText(r, g, b);
+  const varName = exportVarName || '--color-primary';
+  const text = ExportManager.allText(r, g, b).replace(/--color-primary/g, varName);
   const hex  = ColorConverter.toHex(r, g, b).slice(1);
   const blob = new Blob([text], { type: 'text/css' });
   const url  = URL.createObjectURL(blob);
@@ -744,4 +1081,626 @@ function onStorageChange(changes) {
     colorHistory = changes.colorHistory.newValue;
     renderHistory();
   }
+  // Feature 12: Multi-tab sync
+  if (changes.pinnedColors?.newValue) {
+    pinnedColors = changes.pinnedColors.newValue;
+    renderHistory();
+  }
+  if (changes.palettes?.newValue) {
+    palettes = changes.palettes.newValue;
+    renderPaletteCollections();
+  }
+  if (changes.exportVarName?.newValue) {
+    exportVarName = changes.exportVarName.newValue;
+    const el = $('exportVarName');
+    if (el) el.value = exportVarName;
+    renderExport();
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 1: MANUAL COLOR INPUT
+// ═══════════════════════════════════════════════════
+function applyManualColor() {
+  const input = $('manualColorInput');
+  const raw = input.value.trim();
+  if (!raw) { input.style.borderColor = ''; return; }
+
+  const parsed = parseManualColorInput(raw);
+  if (parsed) {
+    input.style.borderColor = '';
+    currentColor = parsed;
+    colorHistory.unshift(parsed);
+    if (colorHistory.length > 20) colorHistory.pop();
+    chrome.storage.local.set({ colorHistory });
+    updateColorDisplay(currentColor);
+    renderHistory();
+  } else {
+    input.style.borderColor = 'var(--danger)';
+  }
+}
+
+function parseManualColorInput(str) {
+  str = str.trim();
+  const hexMatch = str.match(/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+  if (hexMatch) {
+    return ColorConverter.hexToRgb(str.startsWith('#') ? str : '#' + str);
+  }
+  const rgbMatch = str.match(/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i);
+  if (rgbMatch) {
+    const r = parseInt(rgbMatch[1]), g = parseInt(rgbMatch[2]), b = parseInt(rgbMatch[3]);
+    if (r <= 255 && g <= 255 && b <= 255) return { r, g, b };
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 2: SHARE COLOR LINK
+// ═══════════════════════════════════════════════════
+function shareColorLink() {
+  const hex = ColorConverter.toHex(currentColor.r, currentColor.g, currentColor.b).slice(1);
+  const url = `https://coolors.co/${hex}`;
+  navigator.clipboard.writeText(url)
+    .then(() => showToast('Link copied!', 'success'))
+    .catch(() => showToast('Copy failed', 'error'));
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 5: IMPORT PALETTE
+// ═══════════════════════════════════════════════════
+function toggleImportPanel() {
+  const panel = $('importPanel');
+  const btn = $('btnToggleImport');
+  if (!panel) return;
+  const isHidden = panel.style.display === 'none';
+  panel.style.display = isHidden ? '' : 'none';
+  btn.textContent = isHidden ? '▾ Hide' : '▸ Show';
+}
+
+function importPalette() {
+  const textarea = $('importPaletteInput');
+  const raw = textarea.value;
+  const tokens = raw.split(/[\s,\n]+/).filter(Boolean);
+  let added = 0;
+
+  tokens.forEach(tok => {
+    tok = tok.trim();
+    const rgb = ColorConverter.hexToRgb(tok.startsWith('#') ? tok : '#' + tok);
+    if (rgb) { colorHistory.unshift(rgb); added++; }
+  });
+
+  if (added > 0) {
+    if (colorHistory.length > 20) colorHistory.length = 20;
+    chrome.storage.local.set({ colorHistory });
+    renderHistory();
+    textarea.value = '';
+    showToast(`Imported ${added} color${added > 1 ? 's' : ''}`, 'success');
+  } else {
+    showToast('No valid hex codes found', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 6: PALETTE COLLECTIONS
+// ═══════════════════════════════════════════════════
+function renderPaletteCollections() {
+  const list = $('paletteCollectionList');
+  if (!list) return;
+  list.innerHTML = '';
+
+  if (!palettes.length) {
+    list.innerHTML = '<div class="history-empty">No collections yet</div>';
+    return;
+  }
+
+  palettes.forEach((palette, idx) => {
+    const item = document.createElement('div');
+    item.className = 'palette-collection-item';
+
+    const header = document.createElement('div');
+    header.className = 'palette-collection-header';
+
+    const name = document.createElement('span');
+    name.className = 'palette-collection-name';
+    name.textContent = palette.name;
+
+    const actions = document.createElement('div');
+    actions.className = 'palette-collection-actions';
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-copy';
+    addBtn.title = 'Add current color';
+    addBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+    addBtn.addEventListener('click', () => addColorToPaletteCollection(idx));
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-copy';
+    delBtn.title = 'Delete collection';
+    delBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    delBtn.addEventListener('click', () => deletePaletteCollection(idx));
+
+    actions.appendChild(addBtn);
+    actions.appendChild(delBtn);
+    header.appendChild(name);
+    header.appendChild(actions);
+
+    const swatches = document.createElement('div');
+    swatches.className = 'palette-collection-swatches';
+
+    if (!palette.colors.length) {
+      swatches.innerHTML = '<span class="palette-empty-text">No colors yet — click + to add</span>';
+    } else {
+      palette.colors.forEach(c => {
+        const hex = ColorConverter.toHex(c.r, c.g, c.b);
+        const sw = document.createElement('div');
+        sw.className = 'palette-collection-swatch';
+        sw.style.background = hex;
+        sw.title = hex.toUpperCase();
+        sw.addEventListener('click', () => {
+          currentColor = { ...c };
+          updateColorDisplay(currentColor);
+          switchTab('picker');
+          showToast('Loaded ' + hex.toUpperCase(), 'success');
+        });
+        swatches.appendChild(sw);
+      });
+    }
+
+    item.appendChild(header);
+    item.appendChild(swatches);
+    list.appendChild(item);
+  });
+}
+
+function createPaletteCollection() {
+  const input = $('paletteNameInput');
+  const name = input.value.trim();
+  if (!name) { showToast('Enter a collection name', 'error'); return; }
+  palettes.push({ name, colors: [] });
+  chrome.storage.local.set({ palettes });
+  input.value = '';
+  renderPaletteCollections();
+  showToast('Collection created!', 'success');
+}
+
+function addColorToPaletteCollection(idx) {
+  palettes[idx].colors.push({ ...currentColor });
+  chrome.storage.local.set({ palettes });
+  renderPaletteCollections();
+  showToast('Added ' + ColorConverter.toHex(currentColor.r, currentColor.g, currentColor.b).toUpperCase(), 'success');
+}
+
+function deletePaletteCollection(idx) {
+  palettes.splice(idx, 1);
+  chrome.storage.local.set({ palettes });
+  renderPaletteCollections();
+  showToast('Collection deleted');
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 7: GRADIENT BUILDER
+// ═══════════════════════════════════════════════════
+function initGradientBuilder() {
+  const { r, g, b } = currentColor;
+  const { h, s, l } = ColorConverter._rgbToHslVals(r, g, b);
+  const comp = ColorConverter.hslToRgb((h + 180) % 360, s, l);
+  gradStops = [{ r, g, b }, { r: comp.r, g: comp.g, b: comp.b }];
+  renderGradientStops();
+  renderGradient();
+}
+
+function renderGradientStops() {
+  const container = $('gradientStops');
+  if (!container) return;
+  container.innerHTML = '';
+
+  gradStops.forEach((stop, idx) => {
+    const hex = ColorConverter.toHex(stop.r, stop.g, stop.b);
+    const row = document.createElement('div');
+    row.className = 'gradient-stop-row';
+
+    const colorInput = document.createElement('input');
+    colorInput.type = 'color';
+    colorInput.className = 'gradient-stop-color';
+    colorInput.value = hex;
+
+    const hexInput = document.createElement('input');
+    hexInput.type = 'text';
+    hexInput.className = 'gradient-stop-hex';
+    hexInput.value = hex.toUpperCase();
+    hexInput.maxLength = 7;
+
+    colorInput.addEventListener('input', e => {
+      const rgb = ColorConverter.hexToRgb(e.target.value);
+      if (rgb) { gradStops[idx] = rgb; hexInput.value = ColorConverter.toHex(rgb.r, rgb.g, rgb.b).toUpperCase(); renderGradient(); }
+    });
+
+    hexInput.addEventListener('input', e => {
+      const rgb = ColorConverter.hexToRgb(e.target.value);
+      if (rgb) { gradStops[idx] = rgb; colorInput.value = ColorConverter.toHex(rgb.r, rgb.g, rgb.b); renderGradient(); }
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-copy';
+    delBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    delBtn.title = 'Remove stop';
+    delBtn.disabled = gradStops.length <= 2;
+    delBtn.style.opacity = gradStops.length <= 2 ? '0.3' : '1';
+    delBtn.addEventListener('click', () => {
+      if (gradStops.length > 2) { gradStops.splice(idx, 1); renderGradientStops(); renderGradient(); }
+    });
+
+    row.appendChild(colorInput);
+    row.appendChild(hexInput);
+    row.appendChild(delBtn);
+    container.appendChild(row);
+  });
+}
+
+function addGradientStop() {
+  const last = gradStops[gradStops.length - 1];
+  gradStops.push({ ...last });
+  renderGradientStops();
+  renderGradient();
+}
+
+function renderGradient() {
+  const previewBar = $('gradientPreviewBar');
+  const cssOutput = $('gradientCssOutput');
+  if (!previewBar || !cssOutput || !gradStops.length) return;
+
+  const dirEl = $('gradientDirection');
+  const direction = dirEl ? dirEl.value : 'to bottom';
+  const stopColors = gradStops.map(s => ColorConverter.toHex(s.r, s.g, s.b)).join(', ');
+
+  let css;
+  if (direction === 'radial') {
+    css = `background: radial-gradient(circle, ${stopColors});`;
+    previewBar.style.background = `radial-gradient(circle, ${stopColors})`;
+  } else {
+    css = `background: linear-gradient(${direction}, ${stopColors});`;
+    previewBar.style.background = `linear-gradient(${direction}, ${stopColors})`;
+  }
+  cssOutput.value = css;
+}
+
+function copyGradientCss() {
+  const output = $('gradientCssOutput');
+  if (!output || !output.value) return;
+  const btn = $('btnCopyGradient');
+  navigator.clipboard.writeText(output.value)
+    .then(() => { showToast('CSS copied!', 'success'); if (btn) { btn.classList.add('copied'); setTimeout(() => btn.classList.remove('copied'), 1500); } })
+    .catch(() => showToast('Copy failed', 'error'));
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 8: COLOR BLINDNESS SIMULATOR
+// ═══════════════════════════════════════════════════
+function simulateColorBlindness(r, g, b, type) {
+  let nr, ng, nb;
+  if (type === 'deuteranopia') {
+    nr = 0.625 * r + 0.375 * g;
+    ng = 0.70  * r + 0.30  * g;
+    nb = 0.30  * g + 0.70  * b;
+  } else if (type === 'protanopia') {
+    nr = 0.567 * r + 0.433 * g;
+    ng = 0.558 * r + 0.442 * g;
+    nb = 0.242 * g + 0.758 * b;
+  } else if (type === 'tritanopia') {
+    nr = 0.95  * r + 0.05  * g;
+    ng = 0.433 * g + 0.567 * b;
+    nb = 0.475 * g + 0.525 * b;
+  } else {
+    nr = r; ng = g; nb = b;
+  }
+  return {
+    r: Math.round(Math.max(0, Math.min(255, nr))),
+    g: Math.round(Math.max(0, Math.min(255, ng))),
+    b: Math.round(Math.max(0, Math.min(255, nb)))
+  };
+}
+
+function updateColorBlindness() {
+  const { r, g, b } = currentColor;
+  [
+    { id: 'cbNormal',       type: 'normal'       },
+    { id: 'cbDeuteranopia', type: 'deuteranopia' },
+    { id: 'cbProtanopia',   type: 'protanopia'   },
+    { id: 'cbTritanopia',   type: 'tritanopia'   }
+  ].forEach(({ id, type }) => {
+    const el = $(id);
+    if (!el) return;
+    const sim = simulateColorBlindness(r, g, b, type);
+    const hex = ColorConverter.toHex(sim.r, sim.g, sim.b);
+    el.style.background = hex;
+    el.dataset.r = sim.r;
+    el.dataset.g = sim.g;
+    el.dataset.b = sim.b;
+    el.title = hex.toUpperCase();
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 9: IMAGE EYEDROPPER
+// ═══════════════════════════════════════════════════
+function initImagePicker() {
+  const dropZone  = $('imageDropZone');
+  const fileInput = $('imageFileInput');
+  const canvas    = $('imagePickerCanvas');
+  const clearBtn  = $('btnClearImage');
+  if (!dropZone) return;
+
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', e => {
+    if (e.target.files[0]) loadImageFile(e.target.files[0]);
+  });
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) loadImageFile(file);
+  });
+
+  document.addEventListener('paste', e => {
+    const panel = $('panel-tools');
+    if (!panel || !panel.classList.contains('active')) return;
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (const item of items) {
+      if (item.type.startsWith('image/')) { const f = item.getAsFile(); if (f) { loadImageFile(f); break; } }
+    }
+  });
+
+  canvas.addEventListener('click', e => {
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const sx = canvas.width / rect.width, sy = canvas.height / rect.height;
+    const x = Math.floor((e.clientX - rect.left) * sx);
+    const y = Math.floor((e.clientY - rect.top)  * sy);
+    const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
+    currentColor = { r, g, b };
+    colorHistory.unshift({ r, g, b });
+    if (colorHistory.length > 20) colorHistory.pop();
+    chrome.storage.local.set({ colorHistory });
+    updateColorDisplay(currentColor);
+    renderHistory();
+    const hex = ColorConverter.toHex(r, g, b);
+    const pickedEl = $('imagePickedHex');
+    pickedEl.textContent = hex.toUpperCase();
+    pickedEl.style.background = hex;
+    pickedEl.style.color = (r * 0.299 + g * 0.587 + b * 0.114) > 128 ? '#000' : '#fff';
+    pickedEl.style.display = '';
+    showToast('Picked ' + hex.toUpperCase(), 'success');
+  });
+
+  clearBtn.addEventListener('click', () => {
+    canvas.style.display = 'none';
+    $('imagePickedHex').style.display = 'none';
+    clearBtn.style.display = 'none';
+    dropZone.style.display = '';
+    fileInput.value = '';
+  });
+}
+
+function loadImageFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = $('imagePickerCanvas');
+      const dropZone = $('imageDropZone');
+      const maxW = 280;
+      const ratio = Math.min(maxW / img.width, 1);
+      canvas.width  = Math.round(img.width  * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'block';
+      canvas.style.maxWidth = '100%';
+      dropZone.style.display = 'none';
+      $('btnClearImage').style.display = '';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 1: RANDOM COLOR GENERATOR
+// ═══════════════════════════════════════════════════
+function generateRandomColor() {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  currentColor = { r, g, b };
+  historyIndex = -1;
+  colorHistory.unshift({ r, g, b, timestamp: Date.now() });
+  if (colorHistory.length > 20) colorHistory.pop();
+  chrome.storage.local.set({ colorHistory });
+  updateColorDisplay(currentColor);
+  renderHistory();
+  showToast('Random color!', 'success');
+}
+
+function toggleRandomPalette() {
+  const container = $('randomPaletteSwatches');
+  if (!container) return;
+  const hidden = container.style.display === 'none';
+  container.style.display = hidden ? 'flex' : 'none';
+  if (hidden) renderRandomPalette();
+}
+
+function renderRandomPalette() {
+  const container = $('randomPaletteSwatches');
+  if (!container) return;
+  const baseHue = Math.random() * 360;
+  const sat = 55 + Math.random() * 30;
+  const lit = 42 + Math.random() * 18;
+  const hues = [0, 30, 72, 144, 216].map(o => (baseHue + o) % 360);
+  container.innerHTML = '';
+  hues.forEach(h => {
+    const c = ColorConverter.hslToRgb(h, sat, lit);
+    const hex = ColorConverter.toHex(c.r, c.g, c.b);
+    const sw = document.createElement('div');
+    sw.className = 'random-palette-swatch';
+    sw.style.background = hex;
+    sw.title = hex.toUpperCase();
+    sw.addEventListener('click', () => {
+      currentColor = { ...c };
+      historyIndex = -1;
+      colorHistory.unshift({ ...c, timestamp: Date.now() });
+      if (colorHistory.length > 20) colorHistory.pop();
+      chrome.storage.local.set({ colorHistory });
+      updateColorDisplay(currentColor);
+      renderHistory();
+      showToast('Loaded ' + hex.toUpperCase(), 'success');
+    });
+    container.appendChild(sw);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 6: COLOR TEMPERATURE
+// ═══════════════════════════════════════════════════
+function getColorTemperature(h) {
+  if (h < 60 || h >= 300) return { label: '🔥 Warm', cls: 'temp-warm' };
+  if (h < 150) return { label: '🌅 Neutral/Warm', cls: 'temp-neutral-warm' };
+  if (h < 240) return { label: '❄️ Cool', cls: 'temp-cool' };
+  return { label: '🌙 Neutral/Cool', cls: 'temp-neutral-cool' };
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 4: COLOR COMPARE
+// ═══════════════════════════════════════════════════
+function toggleCompare() {
+  const panel = $('comparePanel');
+  const toggle = $('compareToggle');
+  if (!panel) return;
+  if (panel.style.display === 'none') {
+    panel.style.display = '';
+    toggle.textContent = 'Compare ▲';
+    updateCompare();
+  } else {
+    panel.style.display = 'none';
+    toggle.textContent = 'Compare ▼';
+  }
+}
+
+function updateCompare() {
+  const a = currentColor;
+  const b = compareColorB;
+  const hexA = ColorConverter.toHex(a.r, a.g, a.b);
+  const hexB = ColorConverter.toHex(b.r, b.g, b.b);
+
+  $('compareSwatchA').style.background = hexA;
+  $('compareLabelA').textContent = hexA.toUpperCase();
+  $('compareNameA').textContent = '≈ ' + ColorNames.findNearest(a.r, a.g, a.b);
+
+  $('compareSwatchB').style.background = hexB;
+  $('compareLabelB').textContent = hexB.toUpperCase();
+  $('compareNameB').textContent = '≈ ' + ColorNames.findNearest(b.r, b.g, b.b);
+
+  const hslA = ColorConverter._rgbToHslVals(a.r, a.g, a.b);
+  const hslB = ColorConverter._rgbToHslVals(b.r, b.g, b.b);
+  let hueDiff = Math.abs(hslA.h - hslB.h);
+  if (hueDiff > 180) hueDiff = 360 - hueDiff;
+  const ratio = WCAGChecker.ratio(a, b);
+
+  $('compareStats').innerHTML = `
+    <div class="compare-stat"><span>Hue Δ</span><strong>${Math.round(hueDiff)}°</strong></div>
+    <div class="compare-stat"><span>Lightness Δ</span><strong>${Math.round(Math.abs(hslA.l - hslB.l))}%</strong></div>
+    <div class="compare-stat"><span>Saturation Δ</span><strong>${Math.round(Math.abs(hslA.s - hslB.s))}%</strong></div>
+    <div class="compare-stat"><span>Contrast</span><strong>${ratio.toFixed(2)}:1</strong></div>
+  `;
+}
+
+function swapCompare() {
+  const tmp = { ...currentColor };
+  currentColor = { ...compareColorB };
+  compareColorB = tmp;
+  historyIndex = -1;
+  updateColorDisplay(currentColor);
+  const hexB = ColorConverter.toHex(compareColorB.r, compareColorB.g, compareColorB.b);
+  $('compareColorB').value = hexB;
+  updateCompare();
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 5: PAGE COLOR AUDIT
+// ═══════════════════════════════════════════════════
+async function scanPageColors() {
+  const btn = $('btnScanPage');
+  const status = $('auditStatus');
+  const result = $('auditResult');
+  btn.disabled = true;
+  status.style.display = 'flex';
+  result.style.display = 'none';
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    if (!tab?.id || /^(chrome|about|chrome-extension):/.test(tab.url || '')) {
+      showToast('Cannot audit this page', 'error'); return;
+    }
+    let response;
+    try {
+      response = await chrome.tabs.sendMessage(tab.id, { action: 'auditColors' });
+    } catch (_) {
+      // Content script may not be injected; inject it first
+      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content.js'] });
+      await new Promise(r => setTimeout(r, 80));
+      response = await chrome.tabs.sendMessage(tab.id, { action: 'auditColors' });
+    }
+    if (response?.colors) {
+      const colors = response.colors;
+      $('auditCount').textContent = `Found ${colors.length} unique color${colors.length !== 1 ? 's' : ''}`;
+      const grid = $('auditGrid');
+      grid.innerHTML = '';
+      colors.forEach(({ r, g, b }) => {
+        const hex = ColorConverter.toHex(r, g, b);
+        const item = document.createElement('div');
+        item.className = 'audit-swatch-item';
+        item.title = hex.toUpperCase();
+        const sw = document.createElement('div');
+        sw.className = 'audit-swatch';
+        sw.style.background = hex;
+        const lbl = document.createElement('div');
+        lbl.className = 'audit-swatch-label';
+        lbl.textContent = hex.toUpperCase();
+        item.appendChild(sw);
+        item.appendChild(lbl);
+        item.addEventListener('click', () => {
+          currentColor = { r, g, b };
+          historyIndex = -1;
+          colorHistory.unshift({ r, g, b, timestamp: Date.now() });
+          if (colorHistory.length > 20) colorHistory.pop();
+          chrome.storage.local.set({ colorHistory });
+          updateColorDisplay(currentColor);
+          renderHistory();
+          switchTab('picker');
+          showToast('Loaded ' + hex.toUpperCase(), 'success');
+        });
+        grid.appendChild(item);
+      });
+      result.style.display = '';
+    }
+  } catch (e) {
+    showToast('Scan failed: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    status.style.display = 'none';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 11: RELATIVE TIME HELPER
+// ═══════════════════════════════════════════════════
+function relativeTime(ts) {
+  if (!ts) return '';
+  const diff = Date.now() - ts;
+  if (diff < 60000) return 'just now';
+  if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+  if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+  return Math.floor(diff / 86400000) + 'd ago';
 }

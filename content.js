@@ -23,7 +23,59 @@ window.__colorPickProLoaded = true;
       sendResponse({ ok: true });
       return true;
     }
+    // Feature 5: Page Color Audit
+    if (message.action === 'auditColors') {
+      sendResponse({ colors: auditPageColors() });
+      return true;
+    }
+    // Feature 10: Get element color from last hovered element
+    if (message.action === 'getElementColor') {
+      const el = window.__lastHoveredEl || document.body;
+      const style = window.getComputedStyle(el);
+      const m = (style.color || '').match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (m) {
+        const r = parseInt(m[1]), g = parseInt(m[2]), b = parseInt(m[3]);
+        chrome.runtime.sendMessage({ action: 'colorPicked', r, g, b });
+        const hex = '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('').toUpperCase();
+        const toast = document.createElement('div');
+        Object.assign(toast.style, {
+          position:'fixed',bottom:'20px',right:'20px',zIndex:'2147483647',
+          background: hex, color:(r*.299+g*.587+b*.114)>128?'#000':'#fff',
+          padding:'8px 16px',borderRadius:'8px',font:'700 12px sans-serif',
+          boxShadow:'0 4px 12px rgba(0,0,0,0.4)',pointerEvents:'none'
+        });
+        toast.textContent = hex + ' captured!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+      }
+      sendResponse({ ok: true });
+      return true;
+    }
   });
+
+  // Feature 10: track last hovered element for context menu
+  document.addEventListener('mouseover', e => { window.__lastHoveredEl = e.target; }, true);
+
+  // Feature 5: audit all colors on the page
+  function auditPageColors() {
+    const unique = new Map();
+    const props = ['color','backgroundColor','borderColor','outlineColor'];
+    for (const el of document.querySelectorAll('*')) {
+      if (unique.size >= 50) break;
+      const style = window.getComputedStyle(el);
+      for (const prop of props) {
+        const val = style[prop];
+        if (!val || val === 'transparent' || val === 'rgba(0, 0, 0, 0)') continue;
+        const m = val.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (m) {
+          const r = parseInt(m[1]), g = parseInt(m[2]), b = parseInt(m[3]);
+          const hex = '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+          if (!unique.has(hex)) { unique.set(hex,{r,g,b}); if (unique.size>=50) break; }
+        }
+      }
+    }
+    return [...unique.values()];
+  }
 
   function startPicker(dataUrl) {
     screenshotImg = new Image();
@@ -146,11 +198,27 @@ window.__colorPickProLoaded = true;
 
     // Color band at bottom of magnifier
     magCtx.fillStyle = `rgb(${r},${g},${b})`;
-    magCtx.fillRect(0, magSize - 22, magSize, 22);
+    magCtx.fillRect(0, magSize - 28, magSize, 28);
     magCtx.fillStyle = (r * 0.299 + g * 0.587 + b * 0.114) > 128 ? '#000' : '#fff';
     magCtx.font = '700 10px "SF Mono","Fira Code",monospace';
     magCtx.textAlign = 'center';
-    magCtx.fillText(hex, half, magSize - 8);
+    magCtx.fillText(hex, half, magSize - 6);
+
+    // Feature 13: Draw 5 nearby sample color dots in the band
+    const sampleOffsets = [[0,0],[0,-20*dpr],[20*dpr,0],[0,20*dpr],[-20*dpr,0]];
+    sampleOffsets.forEach(([ox, oy], i) => {
+      const spx = Math.max(0, Math.min(screenshotImg.width-1, Math.round(px+ox)));
+      const spy = Math.max(0, Math.min(screenshotImg.height-1, Math.round(py+oy)));
+      const [sr, sg, sb] = ctx.getImageData(spx, spy, 1, 1).data;
+      const dx = 20 + i * 14, dy = magSize - 20;
+      magCtx.beginPath();
+      magCtx.arc(dx, dy, 5, 0, Math.PI*2);
+      magCtx.fillStyle = `rgb(${sr},${sg},${sb})`;
+      magCtx.fill();
+      magCtx.strokeStyle = 'rgba(255,255,255,0.75)';
+      magCtx.lineWidth = 1;
+      magCtx.stroke();
+    });
 
     // Position magnifier near cursor (avoids edges)
     const pad = 18;
