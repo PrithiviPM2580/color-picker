@@ -778,7 +778,7 @@ function updateColorDisplay({ r, g, b }) {
   $('valHsla').textContent = `hsla(${Math.round(hslH)}, ${Math.round(hslS)}%, ${Math.round(hslL)}%, ${alphaStr})`;
   $('valHex8').textContent = `${hex.toUpperCase()}${alphaHex}`;
   const showAlpha = currentAlpha < 1;
-  $('rowRgba').style.display = showAlpha ? '' : 'none';
+  $('rowRgba').style.display = '';
   $('rowHsla').style.display = showAlpha ? '' : 'none';
   $('rowHex8').style.display = showAlpha ? '' : 'none';
 
