@@ -1605,3 +1605,179 @@ html, body {
   border: 1px solid var(--border);
 }
 .history-swatch[data-time]:hover::before { opacity: 1; }
+
+/* ══════════════════════════════════════════════════
+   Theme Tab — 13 New Features
+══════════════════════════════════════════════════ */
+
+/* ── Feature 13: Presets ─────────────────────────── */
+.theme-preset-save-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.theme-preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+  min-height: 0;
+}
+
+.theme-preset-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.theme-preset-item:hover { background: var(--bg-hover); }
+
+.theme-preset-name {
+  flex: 1;
+  font: 500 11px/1.3 var(--font-sans);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Feature 1: Mode Selector ────────────────────── */
+.theme-mode-selector {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.theme-mode-btn {
+  flex: 1;
+  padding: 5px 8px;
+  font: 500 11px/1 var(--font-sans);
+  color: var(--text-secondary);
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  white-space: nowrap;
+}
+.theme-mode-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.theme-mode-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* ── Feature 3: Duotone second color row ─────────── */
+.duotone-color-row {
+  margin-bottom: 4px;
+}
+
+/* ── Features 5+6: Adjust Palette section ───────── */
+.theme-adjust-section {
+  background: var(--bg-surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+
+.theme-adjust-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.theme-adjust-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.theme-adjust-label {
+  font: 500 10px/1 var(--font-sans);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  width: 30px;
+  flex-shrink: 0;
+}
+
+.theme-adjust-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.theme-adjust-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg-base);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.theme-adjust-val {
+  font: 500 10px/1 var(--font-mono);
+  color: var(--text-secondary);
+  width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Feature 7: Lock swatches ────────────────────── */
+.theme-swatch-lock {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  font-size: 9px;
+  opacity: 0;
+  pointer-events: none;
+  line-height: 1;
+  transition: opacity var(--transition);
+  filter: drop-shadow(0 0 1px rgba(0,0,0,0.6));
+}
+.palette-swatch:hover .theme-swatch-lock { opacity: 1; pointer-events: all; cursor: pointer; }
+.theme-swatch-lock.always-show { opacity: 1; pointer-events: all; cursor: pointer; }
+
+.palette-swatch.swatch-locked {
+  outline: 2px solid rgba(255, 200, 0, 0.85);
+  outline-offset: 1px;
+}
+
+/* ── Features 8+9: UI Preview ────────────────────── */
+.theme-preview-section {
+  margin-bottom: 10px;
+}
+
+.theme-preview-wrap {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.theme-preview-card {
+  flex: 1;
+  min-width: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}

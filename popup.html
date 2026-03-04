@@ -311,7 +311,25 @@
     <!-- ── TAB: THEME GENERATOR ────────────────────────── -->
     <div class="tab-panel" id="panel-theme">
 
-      <div class="section-label">Base Color</div>
+      <!-- Presets -->
+      <div class="section-label">Presets</div>
+      <div class="theme-preset-save-row">
+        <input type="text" id="themePresetName" class="palette-name-input" placeholder="Preset name…" maxlength="30" />
+        <button class="btn-primary sm" id="btnSaveThemePreset">Save</button>
+      </div>
+      <div id="themePresetList" class="theme-preset-list"></div>
+
+      <!-- Mode selector -->
+      <div class="section-label" style="margin-top:10px;">Mode</div>
+      <div class="theme-mode-selector">
+        <button class="theme-mode-btn active" data-mode="harmony">Harmony</button>
+        <button class="theme-mode-btn" data-mode="mono">Mono</button>
+        <button class="theme-mode-btn" data-mode="duotone">Duotone</button>
+        <button class="theme-mode-btn" data-mode="material">Material</button>
+      </div>
+
+      <!-- Base color -->
+      <div class="section-label" style="margin-top:10px;">Base Color</div>
       <div class="theme-base-wrap">
         <div class="color-field">
           <input type="color" id="themeBase" value="#8b5cf6" />
@@ -320,8 +338,53 @@
         <button class="btn-primary sm" id="btnGenTheme">Generate</button>
       </div>
 
+      <!-- Duotone second color (hidden by default) -->
+      <div class="duotone-color-row" id="duotoneColorRow" style="display:none;">
+        <div class="section-label">Second Color</div>
+        <div class="theme-base-wrap" style="margin-bottom:8px;">
+          <div class="color-field">
+            <input type="color" id="themeBase2" value="#00bcd4" />
+            <input type="text" id="themeBaseHex2" value="#00bcd4" maxlength="7" placeholder="#00bcd4" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Palette display -->
       <div id="themePalette" class="theme-palette"></div>
 
+      <!-- Adjust Palette (hidden until generated) -->
+      <div id="themeAdjPanel" style="display:none;" class="theme-adjust-section">
+        <div class="theme-adjust-header">
+          <span class="section-label" style="margin:0;">Adjust Palette</span>
+          <button class="btn-text-sm" id="themeAdjToggle" style="color:var(--text-secondary);">▾ Hide</button>
+        </div>
+        <div id="themeAdjContent">
+          <div class="theme-adjust-row">
+            <span class="theme-adjust-label">Hue</span>
+            <input type="range" id="themeHueSlider" class="theme-adjust-slider" min="-180" max="180" value="0" />
+            <span id="themeHueVal" class="theme-adjust-val">0°</span>
+          </div>
+          <div class="theme-adjust-row">
+            <span class="theme-adjust-label">Sat</span>
+            <input type="range" id="themeSatSlider" class="theme-adjust-slider" min="-100" max="100" value="0" />
+            <span id="themeSatVal" class="theme-adjust-val">0</span>
+          </div>
+          <div class="theme-adjust-row">
+            <span class="theme-adjust-label">Light</span>
+            <input type="range" id="themeLightSlider" class="theme-adjust-slider" min="-50" max="50" value="0" />
+            <span id="themeLightVal" class="theme-adjust-val">0</span>
+          </div>
+          <button class="btn-secondary" id="btnThemeAdjReset" style="width:100%;margin-top:4px;">Reset Adjustments</button>
+        </div>
+      </div>
+
+      <!-- UI Preview (hidden until generated) -->
+      <div id="themePreview" style="display:none;" class="theme-preview-section">
+        <div class="section-label">UI Preview</div>
+        <div class="theme-preview-wrap" id="themePreviewCards"></div>
+      </div>
+
+      <!-- Export actions -->
       <div id="themeActions" class="theme-actions" style="display:none;">
         <button class="btn-secondary" id="btnCopyTheme">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -330,6 +393,18 @@
         <button class="btn-secondary" id="btnCopyTailwind">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Copy Tailwind Config
+        </button>
+        <button class="btn-secondary" id="btnCopyScss">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy SCSS
+        </button>
+        <button class="btn-secondary" id="btnCopyJsonTokens">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy JSON Tokens
+        </button>
+        <button class="btn-secondary" id="btnCopyFigmaTokens">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Figma Tokens
         </button>
       </div>
 
